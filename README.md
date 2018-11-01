@@ -1,3 +1,2 @@
 # ConvNetPort
-ConvNet C# Port
-Port of ConvNetJs (https://github.com/karpathy/convnetjs)
+ConvNet C# Port of ConvNetJs (https://github.com/karpathy/convnetjs)
