@@ -24,11 +24,11 @@ namespace ConvNetTester
 
             net.Layers.Add(new InputLayer() { OutSx = 24, OutSy = 24, OutDepth = 1 });
 
-            net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = 8, stride = 1, pad = 2, activation = "relu" });
+            net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = 8, stride = 1, pad = 2, activation = ActivationEnum.relu });
             net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, OutDepth = 8 });
             net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, OutDepth = 8 });
 
-            net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation = "relu" });
+            net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation =  ActivationEnum.relu });
             net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, OutDepth = 16 });
 
             net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace ConvNetLib
@@ -54,5 +55,58 @@ namespace ConvNetLib
             return new PgListItem[0];
         }
 
+    }
+
+    public class SigmoidLayer : Layer
+    {
+        public override double Backward(object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Volume Forward(Volume v, bool isTraining)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PgListItem[] GetParamsAndGrads(int y = 0)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MaxoutLayer : Layer
+    {
+        public override double Backward(object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Volume Forward(Volume v, bool isTraining)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PgListItem[] GetParamsAndGrads(int y = 0)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class DropOutLayer : Layer
+    {
+        public override double Backward(object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Volume Forward(Volume v, bool isTraining)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PgListItem[] GetParamsAndGrads(int y = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

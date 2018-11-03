@@ -53,6 +53,12 @@
       <DependentUpon>fontRecognizer.cs</DependentUpon>
     </Compile>
     <Compile Include="FontRecognizerStuff.cs" />
+    <Compile Include="qlearn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="qlearn.Designer.cs">
+      <DependentUpon>qlearn.cs</DependentUpon>
+    </Compile>
     <Compile Include="simplify.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     <Compile Include="TcpRoutine.cs" />
     <EmbeddedResource Include="fontRecognizer.resx">
       <DependentUpon>fontRecognizer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="qlearn.resx">
+      <DependentUpon>qlearn.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="simplify.resx">
       <DependentUpon>simplify.cs</DependentUpon>

@@ -69,6 +69,6 @@ namespace ConvNetLib
     public class UnknownClass1
     {
         public int dim;
-        public int val;
+        public double val;
     }
 }

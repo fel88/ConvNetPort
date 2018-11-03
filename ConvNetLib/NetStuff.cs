@@ -10,12 +10,12 @@ namespace ConvNetLib
         public List<int> labels;
 
         static Random r = new Random();
-
-        public static double randi(double a, double b)
+        
+        public static int randi(double a, double b)
         {
             lock (r)
             {
-                return Math.Floor(r.NextDouble() * (b - a) + a);
+                return (int)Math.Floor(r.NextDouble() * (b - a) + a);
             }
         }
         public static double randf(double start, double end)

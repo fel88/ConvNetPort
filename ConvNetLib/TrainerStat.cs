@@ -8,4 +8,11 @@
         public int fwd_time;
         public int bwd_time;
     }
+    public class TdTrainerOptions
+    {
+        public int batch_size;
+        public double learning_rate;
+        public double l2_decay;        
+        public double  momentum;
+    }
 }

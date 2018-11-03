@@ -108,4 +108,22 @@ namespace ConvNetLib
             
         }
     }
+
+    public class SvmLayer : Layer
+    {
+        public override double Backward(object y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Volume Forward(Volume v, bool isTraining)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PgListItem[] GetParamsAndGrads(int y = 0)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

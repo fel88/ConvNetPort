@@ -48,5 +48,12 @@ namespace ConvNetTester
             f.MdiParent = this;
             f.Show();
         }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            qlearn f = new qlearn();
+            f.MdiParent = this;
+            f.Show();
+        }
     }
 }

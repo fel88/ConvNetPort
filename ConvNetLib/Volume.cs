@@ -6,6 +6,17 @@ namespace ConvNetLib
     {
         public double[] Dw;
         public double[] W;
+        public double[] w
+        {
+            get
+            {
+                return W;
+            }
+            set
+            {
+                W = value;
+            }
+        }
         public int Sx;
         public int Sy;
         public int Depth;
