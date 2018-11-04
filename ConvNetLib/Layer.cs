@@ -5,18 +5,23 @@ namespace ConvNetLib
     public abstract class Layer
     {
         public string Name;
+        public Volume in_act;
+        public Volume out_act;
+        public int num_inputs;
+
+        public  Layer(LayerDef def) { }
         public virtual void Init()
         {
         }
 
-        public int OutSx;
-        public int OutSy;
+        public int out_sx;
+        public int out_sy;
 
         public int Sx;
         public int Sy;
 
         public ActivationEnum? activation;
-        public int OutDepth;
+        public int out_depth;
         public Volume In;
         public Volume Out;
         public int? num_classes;
@@ -24,23 +29,23 @@ namespace ConvNetLib
         public double? bias_pref;
         public int? group_size;
         public object drop_prob;
-        public object out_sx;
-        public object in_sx;
-        public object in_sy;
-        public object out_sy;
-        public object out_depth;
-        public object in_depth;
+                
+        public int in_sx;
+        public int in_sy;
+        
+        
+        public int in_depth;
 
         public abstract Volume Forward(Volume v, bool isTraining);
         public abstract double Backward(object y);
         public abstract PgListItem[] GetParamsAndGrads(int y = 0);
 
-        public virtual string GetXmlSection()
+        public virtual string ToXml()
         {
             return "";
         }
 
-        public virtual void ParseXmlSection(XElement elem)
+        public virtual void ParseXml(XElement elem)
         {
 
         }

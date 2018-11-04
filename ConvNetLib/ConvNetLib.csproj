@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DropOutLayer.cs" />
+    <Compile Include="MaxoutLayer.cs" />
     <Compile Include="Net.cs" />
     <Compile Include="ConvLayer.cs" />
     <Compile Include="FullConnLayer.cs" />
@@ -50,7 +52,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegressionLayer.cs" />
     <Compile Include="ReluLayer.cs" />
+    <Compile Include="SigmoidLayer.cs" />
     <Compile Include="SoftmaxLayer.cs" />
+    <Compile Include="SvmLayer.cs" />
     <Compile Include="TanhLayer.cs" />
     <Compile Include="Trainer.cs" />
     <Compile Include="TrainerStat.cs" />

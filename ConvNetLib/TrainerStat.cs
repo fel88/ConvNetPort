@@ -10,6 +10,7 @@
     }
     public class TdTrainerOptions
     {
+        public TrainerMethodEnum method;
         public int batch_size;
         public double learning_rate;
         public double l2_decay;        

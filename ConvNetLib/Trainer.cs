@@ -11,7 +11,7 @@ namespace ConvNetLib
         public double momentum = 0.1;
         private List<double[]> gsum = new List<double[]>();
         private List<double[]> xsum = new List<double[]>();
-        public string method = "sgd";
+        public TrainerMethodEnum method = TrainerMethodEnum.sgd;
         public double l2_decay = 0.001;
         public double l1_decay = 0;
         public double learning_rate = 0.01;
@@ -42,7 +42,7 @@ namespace ConvNetLib
                 var pglist = this.net.getParamsAndGrads();
 
                 // initialize lists for accumulators. Will only be done once on first iteration
-                if (this.gsum.Count == 0 && (this.method != "sgd" || this.momentum > 0.0))
+                if (this.gsum.Count == 0 && (this.method != TrainerMethodEnum.sgd || this.momentum > 0.0))
                 {
                     // only vanilla sgd doesnt need either lists
                     // momentum needs gsum
@@ -51,7 +51,7 @@ namespace ConvNetLib
                     for (var i = 0; i < pglist.Length; i++)
                     {
                         this.gsum.Add(new double[pglist[i].Params.Length]);
-                        if (this.method == "adadelta")
+                        if (this.method == TrainerMethodEnum.adadelta)
                         {
                             this.xsum.Add(new double[pglist[i].Params.Length]);
                         }
@@ -87,7 +87,7 @@ namespace ConvNetLib
 
                         var gsumi = this.gsum[i];
                         var xsumi = this.xsum[i];
-                        if (this.method == "adadelta")
+                        if (this.method == TrainerMethodEnum.adadelta)
                         {
                             // assume adadelta if not sgd or adagrad
                             gsumi[j] = this.ro * gsumi[j] + (1 - this.ro) * gij * gij;
@@ -133,5 +133,10 @@ namespace ConvNetLib
 
             return stat;
         }
+    }
+
+    public enum TrainerMethodEnum
+    {
+        sgd,adadelta
     }
 }

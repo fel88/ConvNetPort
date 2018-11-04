@@ -10,7 +10,7 @@ namespace ConvNetTester
         public static int NewId;
         public MnistItem()
         {
-            
+
             Id = NewId++;
             if (Id == 834)
             {
@@ -72,6 +72,85 @@ namespace ConvNetTester
         public int label;
         public bool isVal;
         public object[] raw;
+        public bool isval;
+    }
+
+    public class CifarVolumePrepared
+    {
+        public Volume x;
+        public int label;
+        public bool isVal;
+        public object[] raw;
+        public bool isval;
+        public CifarImg Item;
+    }
+    public class CifarStuff
+    {
+        public static bool use_validation_data = true;
+        public static CifarVolumePrepared sample_training_instance()
+        {
+
+            // find an unloaded batch
+            //var bi = Math.Floor(Rand.NextDouble() * loaded_train_batches.length);
+            // var b = loaded_train_batches[bi];
+            var k = (int)Math.Floor(Rand.NextDouble() * items.Count); // sample within the batch
+            /*var n = b * 1000 + k;
+
+            // load more batches over time
+            if (step_num % 2000 == 0 && step_num > 0)
+            {
+                for (var i = 0; i < num_batches; i++)
+                {
+                    if (!loaded[i])
+                    {
+                        // load it
+                        load_data_batch(i);
+                        break; // okay for now
+                    }
+                }
+            }*/
+
+            // fetch the appropriate row of the training image and reshape into a Vol
+            var item = items[k];
+            var p = item.Bmp;
+            var x = new Volume(32, 32, 3, 0.0);
+            var W = 32 * 32;
+            var j = 0;
+            for (var dc = 0; dc < 3; dc++)
+            {
+                var i = 0;
+                for (var xc = 0; xc < 32; xc++)
+                {
+
+                    for (var yc = 0; yc < 32; yc++)
+                    {
+                        var px = p.GetPixel(xc, yc);
+                        var bt = (byte)((px.ToArgb() & (dc << 8)) >> 8);
+                        var ix = ((W * k) + i) * 4 + dc;
+                        x.Set(yc, xc, dc, bt / 255.0 - 0.5);
+                        i++;
+                    }
+                }
+            }
+
+            var dx = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
+            var dy = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
+
+            x = Volume.Augment(x, 32, dx, dy, Rand.NextDouble() < 0.5); //maybe flip horizontally
+
+            var isval = use_validation_data && k % 10 == 0 ? true : false;
+            return new CifarVolumePrepared() { x = x, label = item.label, isval = isval, Item = item };
+        }
+        public static List<CifarImg> items = new List<CifarImg>();
+
+        public static List<CifarImg> tests = new List<CifarImg>();
+        public static Random Rand = new Random();
+        public static string[] labels;
+
+        public static CifarImg random_one()
+        {
+            return items[Rand.Next(items.Count)];
+        }
     }
     public class MnistStuff
     {
@@ -164,9 +243,9 @@ namespace ConvNetTester
 
             var n = (int)(Rand.NextDouble() * tests.Count);
 
-         /*   var b = test_batch;
-            var k = (int)Math.Floor(Rand.NextDouble() * num_samples_per_batch);
-            var n = b * num_samples_per_batch + k;*/
+            /*   var b = test_batch;
+               var k = (int)Math.Floor(Rand.NextDouble() * num_samples_per_batch);
+               var n = b * num_samples_per_batch + k;*/
             var item = tests[n];
 
             var image_dimension = item.Bitmap.Width;
@@ -182,7 +261,7 @@ namespace ConvNetTester
                 {
                     for (var yc = 0; yc < image_dimension; yc++)
                     {
-                       // var ix = ((W * k) + i) * 4 + dc;
+                        // var ix = ((W * k) + i) * 4 + dc;
                         var bb = item.Bitmap.GetPixel(xc, yc);
                         //x.Set(yc,xc,dc,p[ix]/255.0-0.5);
                         x.Set(yc, xc, dc, bb / 255.0 - 0.5);
@@ -230,11 +309,20 @@ namespace ConvNetTester
             return new MnistSampleItem()
             {
                 x = xs.ToArray(),
-                Item=item
+                Item = item
             };
 
         }
 
 
+    }
+
+    public class CifarImg
+    {
+        public Bitmap Bmp;
+
+        public byte label;
+        public Volume x;
+        internal bool isval;
     }
 }

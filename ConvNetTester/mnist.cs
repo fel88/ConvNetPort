@@ -16,24 +16,24 @@ namespace ConvNetTester
         {
             InitializeComponent();
             listView1.DoubleBuffered(true);
-            trainer = new Trainer() { method = "adadelta", batch_size = 20, l2_decay = 0.001 };
+            trainer = new Trainer() { method = TrainerMethodEnum.adadelta, batch_size = 20, l2_decay = 0.001 };
 
             net = new Net();
 
             trainer.net = net;
 
-            net.Layers.Add(new InputLayer() { OutSx = 24, OutSy = 24, OutDepth = 1 });
+            net.Layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
 
             net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = 8, stride = 1, pad = 2, activation = ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, OutDepth = 8 });
-            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, OutDepth = 8 });
+            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, out_depth = 8 });
+            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, out_depth = 8 });
 
             net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, OutDepth = 16 });
+            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, out_depth = 16 });
 
-            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });
+            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, out_depth = 16, Sx = 3, Sy = 3, stride = 3 });
 
-            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", OutDepth = 10, NumInputs = 256 });
+            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", out_depth = 10, NumInputs = 256 });
             net.Layers.Add(new SoftmaxLayer() { in_depth = 10, in_sx = 1, in_sy = 1, NumClasses = 10 });
 
             net.Init();
@@ -54,59 +54,7 @@ namespace ConvNetTester
             var dd = 1.0 * Math.Pow(10, d.Value);
             return Math.Floor(x * dd) / dd;
         }
-        public static MnistItem[] LoadImages(string imgPath, string labelsPath, bool withBitmap = false)
-        {
-            List<MnistItem> bmps = new List<MnistItem>();
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            var bytes = File.ReadAllBytes(imgPath);
-            int imagesCnt = ReadInt(bytes, 4);
-            int indexer = 8;
-            var w = ReadInt(bytes, indexer);
-            indexer += 4;
-            var h = ReadInt(bytes, indexer);
-            indexer += 4;
-            for (int i = 0; i < imagesCnt; i++)
-            {
-                bmps.Add(ReadImage(bytes, indexer, w, h));
-                indexer += w * h;
-
-            }
-            sw.Stop();
-            var ms = sw.ElapsedMilliseconds;
-            sw.Stop(); sw.Reset();
-            sw.Start();
-            if (withBitmap)
-            {
-                foreach (var mnistItem in bmps)
-                {
-                    mnistItem.GetBitmap();
-                }
-            }
-            sw.Stop();
-            var ms2 = sw.ElapsedMilliseconds;
-            sw.Stop(); sw.Reset();
-            sw.Start();
-
-            #region load lables
-            bytes = File.ReadAllBytes(labelsPath);
-            imagesCnt = ReadInt(bytes, 4);
-            indexer = 8;
-            for (int i = 0; i < imagesCnt; i++)
-            {
-                bmps[i].Label = bytes[indexer];
-                indexer++;
-            }
-            sw.Stop();
-            var ms3 = sw.ElapsedMilliseconds;
-
-
-            #endregion
-
-            return bmps.ToArray();
-
-        }
+      
 
         string[] names = new string[]
         {
@@ -134,8 +82,8 @@ namespace ConvNetTester
             }
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var items1 = LoadImages(Path.Combine(textBox1.Text, names[0]), Path.Combine(textBox1.Text, names[1])).ToList();
-            var tests = LoadImages(Path.Combine(textBox1.Text, names[2]), Path.Combine(textBox1.Text, names[3])).ToList();
+            var items1 = Stuff.LoadImages(Path.Combine(textBox1.Text, names[0]), Path.Combine(textBox1.Text, names[1])).ToList();
+            var tests = Stuff.LoadImages(Path.Combine(textBox1.Text, names[2]), Path.Combine(textBox1.Text, names[3])).ToList();
             MnistStuff.items.Clear();
             MnistStuff.items.AddRange(items1);
             MnistStuff.tests.AddRange(tests);
@@ -143,33 +91,6 @@ namespace ConvNetTester
             sw.Stop();
             toolStripStatusLabel1.Text = "Loaded: " + (items1.Count + tests.Count) + " images; " + sw.ElapsedMilliseconds + " ms";
             Start = DateTime.Now;
-
-        }
-
-        public static int ReadInt(byte[] bytes, int start)
-        {
-            int res = 0;
-            for (int i = 0; i < 4; i++)
-            {
-                res ^= (bytes[start + (3 - i)] << (i * 8));
-            }
-            return res;
-
-        }
-
-        public static MnistItem ReadImage(byte[] bb, int start, int w, int h)
-        {
-            byte[,] data = new byte[w, h];
-            int cntr = 0;
-            for (int j = 0; j < h; j++)
-            {
-                for (int i = 0; i < w; i++)
-                {
-                    data[i, j] = bb[start + cntr];
-                    cntr++;
-                }
-            }
-            return new MnistItem() { Data = data };
         }
 
         private int cnt = 0;
@@ -206,7 +127,7 @@ namespace ConvNetTester
             {
                 for (int j = 0; j < item.Data.GetLength(1); j++)
                 {
-                    x.W[cntr] = item.Data[i, j] / 255.0;
+                    x.w[cntr] = item.Data[i, j] / 255.0;
                     cntr++;
                 }
             }
@@ -227,9 +148,9 @@ namespace ConvNetTester
             //visualize_activations(net, vis_elt);
 
             var preds = new List<PredClass>();
-            for (var k = 0; k < out_p.W.Length; k++)
+            for (var k = 0; k < out_p.w.Length; k++)
             {
-                preds.Add(new PredClass() { k = k, p = out_p.W[k] });
+                preds.Add(new PredClass() { k = k, p = out_p.w[k] });
             }
             preds = preds.OrderByDescending(z => z.p).ToList();
             //preds.sort(function(a, b){return a.p < b.p ? 1 : -1;});
@@ -272,7 +193,7 @@ namespace ConvNetTester
 
         public void test_predict()
         {
-            var num_classes = net.Layers[net.Layers.Count - 1].OutDepth;
+            var num_classes = net.Layers[net.Layers.Count - 1].out_depth;
             var num_total = 0;
             var num_correct = 0;
             //document.getElementById('testset_acc').innerHTML = '';
@@ -299,14 +220,14 @@ namespace ConvNetTester
                     else if (xs[i] is int)
                     {
                         var vvnew = new Volume(1, 1, num_classes, 0.0);
-                        vvnew.W[0] = (int)xs[i];
+                        vvnew.w[0] = (int)xs[i];
                         var a = net.Forward(vvnew, true);
                         aavg.addFrom(a);
                     }
                     else if (xs[i] is bool)
                     {
                         var vvnew = new Volume(1, 1, num_classes, 0.0);
-                        vvnew.W[0] = (bool)xs[i] ? 1 : 0;
+                        vvnew.w[0] = (bool)xs[i] ? 1 : 0;
                         var a = net.Forward(vvnew, true);
                         aavg.addFrom(a);
                     }
@@ -316,9 +237,9 @@ namespace ConvNetTester
                     }
                 }
                 var preds = new List<PredClass>();
-                for (var k = 0; k < aavg.W.Length; k++)
+                for (var k = 0; k < aavg.w.Length; k++)
                 {
-                    preds.Add(new PredClass() { k = k, p = aavg.W[k] });
+                    preds.Add(new PredClass() { k = k, p = aavg.w[k] });
                 }
                 preds = preds.OrderByDescending(z => z.p).ToList();
 
@@ -367,7 +288,7 @@ namespace ConvNetTester
             //   panel.Controls.Add(pb);
             flowLayoutPanel1.Controls.Add(panel);
 
-            var mma = simplify.maxmin(layer.Out.W);
+            var mma = simplify.maxmin(layer.Out.w);
             var t = "max activation: " + f2t(mma.maxv) + ", min: " + f2t(mma.minv);
             TextBox tb = new TextBox();
             tb.Text = t;
@@ -553,8 +474,6 @@ namespace ConvNetTester
             listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy", (100.0 * mnist.f2t(valAccWindow.get_average())).ToString("F1") + "%" }));
             listView1.Items.Add(new ListViewItem(new string[] { "Examples seen", MnistStuff.step_num + "" }));
 
-
-
         }
 
         DataWinow xLossWindow = new DataWinow(100);
@@ -568,6 +487,12 @@ namespace ConvNetTester
             pause = !pause;
         }
 
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
+
+
 
 }

@@ -55,5 +55,12 @@ namespace ConvNetTester
             f.MdiParent = this;
             f.Show();
         }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            Cifar10 f = new Cifar10();
+            f.MdiParent = this;
+            f.Show();
+        }
     }
 }

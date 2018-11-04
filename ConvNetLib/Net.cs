@@ -24,7 +24,7 @@ namespace ConvNetLib
             xml.Add("<root>");
             foreach (var layer in Layers)
             {
-                xml.Add(layer.GetXmlSection());
+                xml.Add(layer.ToXml());
             }
             xml.Add("</root>");
             var str = xml.Aggregate("", (x, y) => x + y + Environment.NewLine);
@@ -34,9 +34,8 @@ namespace ConvNetLib
         // forward prop the network. 
         // The trainer class passes is_training = true, but when this function is
         // called from outside (not from the trainer), it defaults to prediction mode
-        public Volume Forward(Volume v, bool isTraining=false)
+        public Volume Forward(Volume v, bool isTraining = false)
         {
-
             var act = this.Layers[0].Forward(v, isTraining);
             for (var i = 1; i < this.Layers.Count; i++)
             {
@@ -44,11 +43,12 @@ namespace ConvNetLib
             }
             return act;
         }
+
         public PredClass[] GetPredictions()
         {
             var S = this.Layers[this.Layers.Count - 1];
 
-            var p = S.Out.W;
+            var p = S.Out.w;
             List<PredClass> ppc = new List<PredClass>();
             for (var i = 0; i < p.Length; i++)
             {
@@ -64,7 +64,7 @@ namespace ConvNetLib
             // prediction, assuming the last layer of the net is a softmax
             var S = this.Layers[this.Layers.Count - 1];
 
-            var p = S.Out.W;
+            var p = S.Out.w;
             var maxv = p[0];
             var maxi = 0;
             for (var i = 1; i < p.Length; i++)
@@ -122,7 +122,7 @@ namespace ConvNetLib
                 var ll = Layers.FirstOrDefault(z => z.Name == nm);
                 if (ll != null)
                 {
-                    ll.ParseXmlSection(descendant);
+                    ll.ParseXml(descendant);
                 }
             }
         }
@@ -136,28 +136,28 @@ namespace ConvNetLib
             }
         }
         // desugar layer_defs for adding activation, dropout layers etc
-        Layer[] desugar(List<Layer> defs)
+        LayerDef[] desugar(List<LayerDef> defs)
         {
-            var new_defs = new List<Layer>();
+            var new_defs = new List<LayerDef>();
             for (var i = 0; i < defs.Count; i++)
             {
                 var def = defs[i];
 
-                if (def is SoftmaxLayer || def is SvmLayer)
+                if (def.type == typeof(SoftmaxLayer) || def.type == typeof(SvmLayer))
                 {
                     // add an fc layer here, there is no reason the user should
                     // have to worry about this and we almost always want to
-                    new_defs.Add(new FullConnLayer() { num_neurons = def.num_classes });
-                }
-                if (def is RegressionLayer)
-                {
-                    // add an fc layer here, there is no reason the user should
-                    // have to worry about this and we almost always want to
-                    new_defs.Add(new FullConnLayer() { num_neurons = def.num_neurons });
+                    new_defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = def.num_classes });
                 }
 
-                if ((def is FullConnLayer || def is ConvLayer)
-                    && def.bias_pref == null)
+                if (def.type == typeof(RegressionLayer))
+                {
+                    // add an fc layer here, there is no reason the user should
+                    // have to worry about this and we almost always want to
+                    new_defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = def.num_neurons });
+                }
+
+                if ((def.type == typeof(FullConnLayer) || def.type == typeof(ConvLayer)) && def.bias_pref == null)
                 {
                     def.bias_pref = 0.0;
                     if (def.activation != null && def.activation == ActivationEnum.relu)
@@ -172,33 +172,27 @@ namespace ConvNetLib
 
                 if (def.activation != null)
                 {
-                    if (def.activation == ActivationEnum.relu)
-                    {
-                        new_defs.Add(new ReluLayer());
-                    }
-                    else if (def.activation == ActivationEnum.sigmoid) { new_defs.Add(new SigmoidLayer()); }
-                    else if (def.activation == ActivationEnum.tahn)
-                    {
-                        new_defs.Add(new TanhLayer());
-                    }
+                    if (def.activation == ActivationEnum.relu) { new_defs.Add(new LayerDef() { type = typeof(ReluLayer) }); }
+                    else if (def.activation == ActivationEnum.sigmoid) { new_defs.Add(new LayerDef() { activation = ActivationEnum.sigmoid }); }
+                    else if (def.activation == ActivationEnum.tahn) { new_defs.Add(new LayerDef() { activation = ActivationEnum.tahn }); }
                     else if (def.activation == ActivationEnum.maxout)
                     {
                         // create maxout activation, and pass along group size, if provided
                         var gs = def.group_size != null ? def.group_size : 2;
-                        new_defs.Add(new MaxoutLayer()
+                        new_defs.Add(new LayerDef()
                         {
+                            type = typeof(MaxoutLayer),
                             group_size = gs
                         });
                     }
                     else
                     {
-
                         console.log("ERROR unsupported activation " + def.activation);
                     }
                 }
-                if (def.drop_prob != null && def is DropOutLayer)
+                if (def.drop_prob != null && def.type == typeof(DropOutLayer))
                 {
-                    new_defs.Add(new DropOutLayer() { drop_prob = def.drop_prob });
+                    new_defs.Add(new LayerDef() { type = typeof(DropOutLayer), drop_prob = def.drop_prob });
                 }
 
             }
@@ -206,15 +200,11 @@ namespace ConvNetLib
         }
 
         // takes a list of layer definitions and creates the network layer objects
-        public void makeLayers(List<Layer> defs)
+        public void makeLayers(List<LayerDef> defs)
         {
-
-
             // few checks
             assert(defs.Count >= 2, "Error! At least one input layer and one loss layer are required.");
-            assert(defs[0] is InputLayer, "Error! First layer must be the input layer, to declare size of inputs");
-
-
+            assert(defs[0].type == typeof(InputLayer), "Error! First layer must be the input layer, to declare size of inputs");
 
             defs = desugar(defs).ToList();
 
@@ -231,27 +221,82 @@ namespace ConvNetLib
                     def.in_depth = prev.out_depth;
                 }
 
-                Layers.Add(def);
-                /*  switch (def.type)
-                  {
-                      case 'fc': this.layers.push(new global.FullyConnLayer(def)); break;
-                      case 'lrn': this.layers.push(new global.LocalResponseNormalizationLayer(def)); break;
-                      case 'dropout': this.layers.push(new global.DropoutLayer(def)); break;
-                      case 'input': this.layers.push(new global.InputLayer(def)); break;
-                      case 'softmax': this.layers.push(new global.SoftmaxLayer(def)); break;
-                      case 'regression': this.layers.push(new global.RegressionLayer(def)); break;
-                      case 'conv': this.layers.push(new global.ConvLayer(def)); break;
-                      case 'pool': this.layers.push(new global.PoolLayer(def)); break;
-                      case 'relu': this.layers.push(new global.ReluLayer(def)); break;
-                      case 'sigmoid': this.layers.push(new global.SigmoidLayer(def)); break;
-                      case 'tanh': this.layers.push(new global.TanhLayer(def)); break;
-                      case 'maxout': this.layers.push(new global.MaxoutLayer(def)); break;
-                      case 'svm': this.layers.push(new global.SVMLayer(def)); break;
-                      default: console.log('ERROR: UNRECOGNIZED LAYER TYPE: ' + def.type);
-                  }*/
-            }
+                if (typeof(Layer).IsAssignableFrom(def.type))
+                {
+                    Layers.Add(Activator.CreateInstance(def.type, new object[] { def }) as Layer);
+                }
+                else
+                {
+                    console.log("ERROR: UNRECOGNIZED LAYER TYPE: " + def.type);
+                }
 
+
+                //switch (def.type)
+                //{
+                //    case typeof(FullConnLayer): this.Layers.Add(new FullConnLayer(def)); break;
+                //    case 'lrn': this.Layers.Add(new global.LocalResponseNormalizationLayer(def)); break;
+                //    case 'dropout': this.Layers.Add(new global.DropoutLayer(def)); break;
+                //    case 'input': this.Layers.push(new global.InputLayer(def)); break;
+                //    case 'softmax': this.Layers.push(new global.SoftmaxLayer(def)); break;
+                //    case 'regression': this.Layers.push(new global.RegressionLayer(def)); break;
+                //    case 'conv': this.Layers.push(new global.ConvLayer(def)); break;
+                //    case 'pool': this.Layers.push(new global.PoolLayer(def)); break;
+                //    case 'relu': this.Layers.push(new global.ReluLayer(def)); break;
+                //    case 'sigmoid': this.Layers.push(new global.SigmoidLayer(def)); break;
+                //    case 'tanh': this.Layers.push(new global.TanhLayer(def)); break;
+                //    case 'maxout': this.Layers.push(new global.MaxoutLayer(def)); break;
+                //    case 'svm': this.Layers.push(new global.SVMLayer(def)); break;
+                //    default: console.log("ERROR: UNRECOGNIZED LAYER TYPE: " + def.type);
+                //}
+            }
         }
+
+        //public void makeLayers(List<Layer> defs)
+        //{
+
+
+        //    // few checks
+        //    assert(defs.Count >= 2, "Error! At least one input layer and one loss layer are required.");
+        //    assert(defs[0] is InputLayer, "Error! First layer must be the input layer, to declare size of inputs");
+
+
+
+        //    defs = desugar(defs).ToList();
+
+        //    // create the layers
+        //    this.Layers = new List<Layer>();
+        //    for (var i = 0; i < defs.Count; i++)
+        //    {
+        //        var def = defs[i];
+        //        if (i > 0)
+        //        {
+        //            var prev = this.Layers[i - 1];
+        //            def.in_sx = prev.out_sx;
+        //            def.in_sy = prev.out_sy;
+        //            def.in_depth = prev.out_depth;
+        //        }
+
+        //        Layers.Add(def);
+        //        /*  switch (def.type)
+        //          {
+        //              case 'fc': this.layers.push(new global.FullyConnLayer(def)); break;
+        //              case 'lrn': this.layers.push(new global.LocalResponseNormalizationLayer(def)); break;
+        //              case 'dropout': this.layers.push(new global.DropoutLayer(def)); break;
+        //              case 'input': this.layers.push(new global.InputLayer(def)); break;
+        //              case 'softmax': this.layers.push(new global.SoftmaxLayer(def)); break;
+        //              case 'regression': this.layers.push(new global.RegressionLayer(def)); break;
+        //              case 'conv': this.layers.push(new global.ConvLayer(def)); break;
+        //              case 'pool': this.layers.push(new global.PoolLayer(def)); break;
+        //              case 'relu': this.layers.push(new global.ReluLayer(def)); break;
+        //              case 'sigmoid': this.layers.push(new global.SigmoidLayer(def)); break;
+        //              case 'tanh': this.layers.push(new global.TanhLayer(def)); break;
+        //              case 'maxout': this.layers.push(new global.MaxoutLayer(def)); break;
+        //              case 'svm': this.layers.push(new global.SVMLayer(def)); break;
+        //              default: console.log('ERROR: UNRECOGNIZED LAYER TYPE: ' + def.type);
+        //          }*/
+        //    }
+
+        //}
     }
 
     public class PredClass
@@ -259,5 +304,27 @@ namespace ConvNetLib
         public int k;
         public double p;
     }
-
+    public class LayerDef
+    {
+        public ActivationEnum? activation;
+        public int filters;
+        public int num_classes;
+        public int out_depth;
+        public int out_sx;
+        public int out_sy;
+        public int? pad;
+        public int? stride;
+        public int sx;
+        public Type type;
+        public int num_neurons;
+        public double? bias_pref;
+        public int in_sx;
+        public int in_sy;
+        public int in_depth;
+        public int? group_size;
+        public int? drop_prob;
+        public double? l2_decay_mul;
+        public double? l1_decay_mul;
+        internal int? sy;
+    }
 }

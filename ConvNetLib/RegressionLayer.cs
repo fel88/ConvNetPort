@@ -4,6 +4,10 @@ namespace ConvNetLib
 {
     public class RegressionLayer : Layer
     {
+        public RegressionLayer(LayerDef def=null) : base(def)
+        {
+        }
+
         public override Volume Forward(Volume V, bool isTraining)
         {
             this.In = V;
@@ -25,23 +29,23 @@ namespace ConvNetLib
         {
             // compute and accumulate gradient wrt weights and bias of this layer
             var x = this.In;
-            x.Dw = new double[x.W.Length]; // zero out the gradient of input Vol
+            x.dw = new double[x.w.Length]; // zero out the gradient of input Vol
             var loss = 0.0;
             if (yy is double[])
             {
                 var y = yy as double[];
-                for (var i = 0; i < this.OutDepth; i++)
+                for (var i = 0; i < this.out_depth; i++)
                 {
-                    var dy = x.W[i] - y[i];
-                    x.Dw[i] = dy;
+                    var dy = x.w[i] - y[i];
+                    x.dw[i] = dy;
                     loss += 0.5 * dy * dy;
                 }
             }
             else if (yy is int)
             {
                 // lets hope that only one number is being regressed
-                var dy = x.W[0] - (int)yy;
-                x.Dw[0] = dy;
+                var dy = x.w[0] - (int)yy;
+                x.dw[0] = dy;
                 loss += 0.5 * dy * dy;
             }
             else
@@ -51,8 +55,8 @@ namespace ConvNetLib
                 // and we pass gradient only along dimension dim to be equal to val
                 var i = y.dim;
                 var yi = y.val;
-                var dy = x.W[i] - yi;
-                x.Dw[i] = dy;
+                var dy = x.w[i] - yi;
+                x.dw[i] = dy;
                 loss += 0.5 * dy * dy;
             }
             return loss;

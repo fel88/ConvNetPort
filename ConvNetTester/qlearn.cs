@@ -1,4 +1,5 @@
 ﻿using ConvNetLib;
+using ConvNetTester.Properties;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -23,6 +26,16 @@ namespace ConvNetTester
             w.agents = new[] { new Agent() };
             gofast();
             RecreateGraphics();
+
+            var asm = Assembly.GetExecutingAssembly();
+            var nms = asm.GetManifestResourceNames();
+
+            using (Stream stream = asm.GetManifestResourceStream(nms.First(z => z.Contains("qlearn.json"))))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string result = reader.ReadToEnd();
+                richTextBox1.Text = result;
+            }
         }
 
         public void RecreateGraphics()
@@ -39,7 +52,7 @@ namespace ConvNetTester
         void goveryfast()
         {
             clearInterval(current_interval_id);
-            current_interval_id = setInterval(tick, 0);
+            current_interval_id = setInterval(tick, 1);
             skipdraw = true;
             simspeed = 3;
         }
@@ -61,13 +74,14 @@ namespace ConvNetTester
         }
         private int setInterval(Action tick, int v)
         {
+            timer1.Interval = v;
             return 0;
         }
 
         void gofast()
         {
             clearInterval(current_interval_id);
-            current_interval_id = setInterval(tick, 0);
+            current_interval_id = setInterval(tick, 1);
             skipdraw = false;
             simspeed = 2;
         }
@@ -226,6 +240,21 @@ namespace ConvNetTester
         {
             RecreateGraphics();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            goslow();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            gofast();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class Eye
@@ -343,11 +372,11 @@ namespace ConvNetTester
             // given an input state. Here we specify one explicitly the hard way
             // but user could also equivalently instead use opt.hidden_layer_sizes = [20,20]
             // to just insert simple relu hidden layers.
-            var layer_defs = new List<Layer>();
-            layer_defs.Add(new InputLayer() { OutSx = 1, OutSy = 1, OutDepth = network_size });
-            layer_defs.Add(new FullConnLayer() { num_neurons = 50, activation = ActivationEnum.relu });
-            layer_defs.Add(new FullConnLayer() { num_neurons = 50, activation = ActivationEnum.relu });
-            layer_defs.Add(new RegressionLayer() { /*num_neurons = num_actions */});
+            var layer_defs = new List<LayerDef>();
+            layer_defs.Add(new LayerDef() { type = typeof(InputLayer), out_sx = 1, out_sy = 1, out_depth = network_size });
+            layer_defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 50, activation = ActivationEnum.relu });
+            layer_defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 50, activation = ActivationEnum.relu });
+            layer_defs.Add(new LayerDef() { type = typeof(RegressionLayer), num_neurons = num_actions });
 
             //            // options for the Temporal Difference learner that trains the above net
             //            // by backpropping the temporal difference learning rule.
@@ -425,7 +454,7 @@ namespace ConvNetTester
         public int? learning_steps_burnin = 3000;
         public double? epsilon_min = 0.05;
         public double? epsilon_test_time = 0.05;
-        public List<Layer> layer_defs;
+        public List<LayerDef> layer_defs;
         public TdTrainerOptions tdtrainer_options;
         internal int[] random_action_distribution;
         internal int[] hidden_layer_sizes;
@@ -503,7 +532,7 @@ namespace ConvNetTester
 
 
             // create [state -> value of all possible actions] modeling net for the value function
-            var layer_defs = new List<Layer>();
+            var layer_defs = new List<LayerDef>();
             if (opt.layer_defs != null)
             {
                 // this is an advanced usage feature, because size of the input to the network, and number of
@@ -514,15 +543,15 @@ namespace ConvNetTester
                 {
                     console.log("TROUBLE! must have at least 2 layers");
                 }
-                if (!(layer_defs[0] is InputLayer))
+                if (!(layer_defs[0].type == typeof(InputLayer)))
                 {
                     console.log("TROUBLE! first layer must be input layer!");
                 }
-                if (!(layer_defs[layer_defs.Count - 1] is RegressionLayer))
+                if (!(layer_defs[layer_defs.Count - 1].type == typeof(RegressionLayer)))
                 {
                     console.log("TROUBLE! last layer must be input regression!");
                 }
-                if (layer_defs[0].OutDepth * layer_defs[0].OutSx * layer_defs[0].OutSy != this.net_inputs)
+                if (layer_defs[0].out_depth * layer_defs[0].out_sx * layer_defs[0].out_sy != this.net_inputs)
                 {
                     console.log("TROUBLE! Number of inputs must be num_states * temporal_window + num_actions * temporal_window + num_states!");
                 }
@@ -534,17 +563,17 @@ namespace ConvNetTester
             else
             {
                 // create a very simple neural net by default
-                layer_defs.Add(new InputLayer() { OutSx = 1, OutSy = 1, OutDepth = this.net_inputs });
+                layer_defs.Add(new LayerDef() { type = typeof(InputLayer), out_sx = 1, out_sy = 1, out_depth = this.net_inputs });
                 if (opt.hidden_layer_sizes != null)
                 {
                     // allow user to specify this via the option, for convenience
                     var hl = opt.hidden_layer_sizes;
                     for (var k = 0; k < hl.Length; k++)
                     {
-                        layer_defs.Add(new FullConnLayer() { num_neurons = hl[k], activation = ActivationEnum.relu }); // relu by default
+                        layer_defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = hl[k], activation = ActivationEnum.relu }); // relu by default
                     }
                 }
-                layer_defs.Add(new RegressionLayer() { num_neurons = num_actions }); // value function output
+                layer_defs.Add(new LayerDef() { type = typeof(RegressionLayer), num_neurons = num_actions }); // value function output
             }
             this.value_net = new Net();
             this.value_net.makeLayers(layer_defs);
@@ -557,8 +586,6 @@ namespace ConvNetTester
             }
 
             this.tdtrainer = new SGDTrainer(this.value_net, tdtrainer_options);
-
-
 
             // experience replay
             this.experience = new List<ConvNetTester.Experience>();
@@ -626,7 +653,7 @@ namespace ConvNetTester
             // compute the value of doing any action in this state
             // and return the argmax action and its value
             var svol = new Volume(1, 1, this.net_inputs);
-            svol.W = s;
+            svol.w = s;
             var action_values = this.value_net.Forward(svol);
             var maxk = 0;
             var maxval = action_values.w[0];
@@ -1171,12 +1198,11 @@ namespace ConvNetTester
 
     public class SGDTrainer : Trainer
     {
-        private TdTrainerOptions tdtrainer_options;
-        private Net value_net;
+        private TdTrainerOptions tdtrainer_options;        
 
         public SGDTrainer(Net value_net, TdTrainerOptions tdtrainer_options)
         {
-            this.value_net = value_net;
+            this.net = value_net;
             this.tdtrainer_options = tdtrainer_options;
         }
     }
@@ -1193,6 +1219,7 @@ namespace ConvNetTester
             int? size;
             double sum;
 
+            public Window() { }
             public Window(int? size, int? minsize)
             {
                 this.v = new List<double>();

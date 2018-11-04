@@ -5,6 +5,10 @@ namespace ConvNetLib
 {
     public class TanhLayer : Layer
     {
+        public TanhLayer(LayerDef def=null) : base(def)
+        {
+        }
+
         public override Volume Forward(Volume v, bool training)
         {
 
@@ -19,11 +23,11 @@ namespace ConvNetLib
               return this.out_act;*/
 
             In = v;
-            Volume v2 = new Volume(v.Sx, v.Sy, v.Depth);
-            var N = v.W.Length;
+            Volume v2 = new Volume(v.sx, v.sy, v.Depth);
+            var N = v.w.Length;
             for (var i = 0; i < N; i++)
             {
-                v2.W[i] = tanh(v.W[i]);
+                v2.w[i] = tanh(v.w[i]);
             }
             Out = v2;
             return Out;
@@ -40,12 +44,12 @@ namespace ConvNetLib
 
             var V = In; // we need to set dw of this
             var V2 = Out;
-            var N = V.W.Length;
-            V.Dw = new double[N]; // zero out gradient wrt data
+            var N = V.w.Length;
+            V.dw = new double[N]; // zero out gradient wrt data
             for (var i = 0; i < N; i++)
             {
-                var v2wi = V2.W[i];
-                V.Dw[i] = (1.0 - v2wi * v2wi) * V2.Dw[i];
+                var v2wi = V2.w[i];
+                V.dw[i] = (1.0 - v2wi * v2wi) * V2.dw[i];
             }
             return 0;
 

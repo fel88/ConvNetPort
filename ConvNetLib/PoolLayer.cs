@@ -6,9 +6,7 @@ namespace ConvNetLib
 {
     public class PoolLayer : Layer
     {
-        public PoolLayer()
-        {
-        }
+        
 
         public override void Init()
         {
@@ -40,31 +38,31 @@ namespace ConvNetLib
             this.out_sx = (int)Math.Floor((double)((in_sx + pad * 2 - Sx) / stride + 1));
             this.out_sy = (int)Math.Floor((double)((in_sy + pad * 2 - Sy) / stride + 1));
             // store switches for x,y coordinates for where the max comes from, for each output neuron
-            this.switchx = new int[this.out_sx * this.out_sy * this.OutDepth];
-            this.switchy = new int[this.out_sx * this.out_sy * this.OutDepth];
+            this.switchx = new int[this.out_sx * this.out_sy * this.out_depth];
+            this.switchy = new int[this.out_sx * this.out_sy * this.out_depth];
         }
 
         private int[] switchx;
         private int[] switchy;
         private int pad = 0;
 
-        private int out_sx;
-        private int out_sy;
-
-        public int in_sx;
-        public int in_sy;
+        
 
 
         public int stride = 2;
+
+        public PoolLayer(LayerDef def=null) : base(def)
+        {
+        }
 
         public override Volume Forward(Volume vin, bool training)
         {
             this.In = vin;
 
-            var A = new Volume(this.out_sx, this.out_sy, this.OutDepth, 0.0);
+            var A = new Volume(this.out_sx, this.out_sy, this.out_depth, 0.0);
 
             var n = 0; // a counter for switches
-            for (var d = 0; d < this.OutDepth; d++)
+            for (var d = 0; d < this.out_depth; d++)
             {
                 var x = -this.pad;
                 var y = -this.pad;
@@ -84,7 +82,7 @@ namespace ConvNetLib
                             {
                                 var oy = y + fy;
                                 var ox = x + fx;
-                                if (oy >= 0 && oy < vin.Sy && ox >= 0 && ox < vin.Sx)
+                                if (oy >= 0 && oy < vin.sy && ox >= 0 && ox < vin.sx)
                                 {
                                     var v = vin.Get(ox, oy, d);
                                     // perform max pooling and store pointers to where
@@ -116,11 +114,11 @@ namespace ConvNetLib
             // pooling layers have no parameters, so simply compute 
             // gradient wrt data here
             var V = this.In;
-            V.Dw = new double[V.W.Length]; // zero out gradient wrt data
+            V.dw = new double[V.w.Length]; // zero out gradient wrt data
             var A = this.Out; // computed in forward pass 
 
             var n = 0;
-            for (var d = 0; d < this.OutDepth; d++)
+            for (var d = 0; d < this.out_depth; d++)
             {
                 var x = -this.pad;
                 var y = -this.pad;
@@ -145,7 +143,7 @@ namespace ConvNetLib
             return new PgListItem[0];
         }
 
-        public override string GetXmlSection()
+        public override string ToXml()
         {
             var xx = switchx.Aggregate("", (x, y) => x + y + ";");
             var yy = switchy.Aggregate("", (x, y) => x + y + ";");
@@ -155,7 +153,7 @@ namespace ConvNetLib
             return str;
         }
 
-        public override void ParseXmlSection(XElement elem)
+        public override void ParseXml(XElement elem)
         {
             var xx =
                 elem.Attribute("swx")

@@ -171,7 +171,7 @@ namespace ConvNetLib
             {
                 for (var ix = 0; ix < data.Count; ix++)
                 {
-                    x.W = data[ix];
+                    x.w = data[ix];
                     var stats = trainer.train(x, labels[ix]);
                     avloss += stats.loss;
                 }
@@ -187,14 +187,14 @@ namespace ConvNetLib
         public Net Test1()
         {
             Net net1 = new Net();
-            net1.Layers.Add(new InputLayer() { OutDepth = 2 });
+            net1.Layers.Add(new InputLayer() { out_depth = 2 });
 
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn1", NumInputs = 2, OutDepth = 16 });
-            net1.Layers.Add(new TanhLayer() { Name = "tanh1", OutDepth = 16 });
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn2", NumInputs = 16, OutDepth = 2 });
-            net1.Layers.Add(new TanhLayer() { Name = "tanh2", OutDepth = 2 });
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn3", NumInputs = 2, OutDepth = 2 });
-            net1.Layers.Add(new SoftmaxLayer() { NumInputs = 2, in_depth = 2, in_sx = 1, in_sy = 1, OutDepth = 2 });
+            net1.Layers.Add(new FullConnLayer() { Name = "fullConn1", NumInputs = 2, out_depth = 16 });
+            net1.Layers.Add(new TanhLayer() { Name = "tanh1", out_depth = 16 });
+            net1.Layers.Add(new FullConnLayer() { Name = "fullConn2", NumInputs = 16, out_depth = 2 });
+            net1.Layers.Add(new TanhLayer() { Name = "tanh2", out_depth = 2 });
+            net1.Layers.Add(new FullConnLayer() { Name = "fullConn3", NumInputs = 2, out_depth = 2 });
+            net1.Layers.Add(new SoftmaxLayer() { NumInputs = 2, in_depth = 2, in_sx = 1, in_sy = 1, out_depth = 2 });
 
             foreach (var layer in net1.Layers)
             {

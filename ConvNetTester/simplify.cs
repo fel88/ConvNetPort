@@ -111,13 +111,13 @@ namespace ConvNetTester
                 for (var y = 0.0; y <= height; y += density, cy++)
                 {
                     //var dec= svm.marginOne([(x-WIDTH/2)/ss, (y-HEIGHT/2)/ss]);
-                    netx.W[0] = (x - width / 2.0) / ss;
-                    netx.W[1] = (y - height / 2.0) / ss;
+                    netx.w[0] = (x - width / 2.0) / ss;
+                    netx.w[1] = (y - height / 2.0) / ss;
 
                     var a = net.Forward(netx, false);
                     //var a = netx;
                     Brush br = Brushes.Pink;
-                    if (a.W[0] > a.W[1])
+                    if (a.w[0] > a.w[1])
                     {
                         //br = 'rgb(250, 150, 150)';
                     }
@@ -132,14 +132,12 @@ namespace ConvNetTester
                     if (cx % gridstep == 0 && cy % gridstep == 0)
                     {
                         // record the transformation information
-                        var xt = net.Layers[lix].Out.W[d0]; // in screen coords
-                        var yt = net.Layers[lix].Out.W[d1]; // in screen coords
+                        var xt = net.Layers[lix].Out.w[d0]; // in screen coords
+                        var yt = net.Layers[lix].Out.w[d1]; // in screen coords
                         gridx.Add(xt);
                         gridy.Add(yt);
-                        gridl.Add((a.W[0] > a.W[1]) ? 0 : 1); // remember final label as well
+                        gridl.Add((a.w[0] > a.w[1]) ? 0 : 1); // remember final label as well
                     }
-
-
                 }
             }
 
@@ -368,12 +366,12 @@ namespace ConvNetTester
 
                 for (int i = 0; i < stuff.data.Count; i++)
                 {
-                    netx.W[0] = stuff.data[i][0];
-                    netx.W[1] = stuff.data[i][1];
+                    netx.w[0] = stuff.data[i][0];
+                    netx.w[1] = stuff.data[i][1];
                     var a = net.Forward(netx, false);
 
-                    var xt = visWIDTH * (net.Layers[lix].Out.W[d0] - mmx.minv) / mmx.dv; // in screen coords
-                    var yt = visHEIGHT * (net.Layers[lix].Out.W[d1] - mmy.minv) / mmy.dv; // in screen coords
+                    var xt = visWIDTH * (net.Layers[lix].Out.w[d0] - mmx.minv) / mmx.dv; // in screen coords
+                    var yt = visHEIGHT * (net.Layers[lix].Out.w[d1] - mmy.minv) / mmy.dv; // in screen coords
                     Brush br = Brushes.Green;
                     if (stuff.labels[i] == 1)
                     {
@@ -401,11 +399,11 @@ namespace ConvNetTester
         {
             d0++;
             d1++;
-            if (d0 > (net.Layers[lix].OutDepth - 1))
+            if (d0 > (net.Layers[lix].out_depth - 1))
             {
                 d0 = 0;
             }
-            if (d1 > (net.Layers[lix].OutDepth - 1))
+            if (d1 > (net.Layers[lix].out_depth - 1))
             {
                 d1 = 0;
             }

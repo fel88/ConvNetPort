@@ -63,26 +63,26 @@ namespace ConvNetTester
                 tags.Add(s);
             }
             
-            trainer = new Trainer() { method = "adadelta", batch_size = 20, l2_decay = 0.001 };            
+            trainer = new Trainer() { method = TrainerMethodEnum.adadelta, batch_size = 20, l2_decay = 0.001 };            
             net = new Net();
 
             trainer.net = net;
 
-            net.Layers.Add(new InputLayer() { OutSx = 24, OutSy = 24, OutDepth = 1 });
+            net.Layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
             int fcnt = 16;
             net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = fcnt, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, OutDepth = fcnt });
-            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, OutDepth = fcnt });
+            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, out_depth = fcnt });
+            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, out_depth = fcnt });
 
             net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, OutDepth = 16 });
-            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });
+            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, out_depth = 16 });
+            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, out_depth = 16, Sx = 3, Sy = 3, stride = 3 });
 
             /*net.Layers.Add(new ConvLayer() { Name = "conv3", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation = "relu" });
             net.Layers.Add(new ReluLayer() { Name = "relu3", in_sx = 12, in_sy = 12, OutDepth = 16 });
             net.Layers.Add(new PoolLayer() { Name = "pool3", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });
             */
-            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", OutDepth = symbols.Count, NumInputs = 256 });
+            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", out_depth = symbols.Count, NumInputs = 256 });
             net.Layers.Add(new SoftmaxLayer() { in_depth = symbols.Count, in_sx = 1, in_sy = 1, NumClasses = symbols.Count });
 
             net.Init();
@@ -179,7 +179,7 @@ namespace ConvNetTester
         }
         public void test_predict()
         {
-            var num_classes = net.Layers[net.Layers.Count - 1].OutDepth;
+            var num_classes = net.Layers[net.Layers.Count - 1].out_depth;
             var num_total = 0;
             var num_correct = 0;
             //document.getElementById('testset_acc').innerHTML = '';
@@ -206,14 +206,14 @@ namespace ConvNetTester
                     else if (xs[i] is int)
                     {
                         var vvnew = new Volume(1, 1, num_classes, 0.0);
-                        vvnew.W[0] = (int)xs[i];
+                        vvnew.w[0] = (int)xs[i];
                         var a = net.Forward(vvnew, true);
                         aavg.addFrom(a);
                     }
                     else if (xs[i] is bool)
                     {
                         var vvnew = new Volume(1, 1, num_classes, 0.0);
-                        vvnew.W[0] = (bool)xs[i] ? 1 : 0;
+                        vvnew.w[0] = (bool)xs[i] ? 1 : 0;
                         var a = net.Forward(vvnew, true);
                         aavg.addFrom(a);
                     }
@@ -223,9 +223,9 @@ namespace ConvNetTester
                     }
                 }
                 var preds = new List<PredClass>();
-                for (var k = 0; k < aavg.W.Length; k++)
+                for (var k = 0; k < aavg.w.Length; k++)
                 {
-                    preds.Add(new PredClass() { k = k, p = aavg.W[k] });
+                    preds.Add(new PredClass() { k = k, p = aavg.w[k] });
                 }
                 preds = preds.OrderByDescending(z => z.p).ToList();
 

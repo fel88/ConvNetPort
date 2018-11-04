@@ -8,28 +8,29 @@ namespace ConvNetLib
 
     public class FullConnLayer : Layer
     {
-        public FullConnLayer(int? out_sx = null, int? out_sy = null)
+
+        public FullConnLayer(LayerDef def=null):base(def)
         {
             l2_decay_mul = 1;
             l1_decay_mul = 0;
         }
-
+        
         public override void Init()
         {
             if (num_neurons != null)
             {
-                this.OutDepth = num_neurons.Value;
+                this.out_depth = num_neurons.Value;
             }
             
             var bias = 0.0;
-            for (var i = 0; i < this.OutDepth; i++) { this.filters.Add(new Volume(1, 1, this.NumInputs)); }
-            this.biases = new Volume(1, 1, this.OutDepth, bias);
+            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(1, 1, this.NumInputs)); }
+            this.biases = new Volume(1, 1, this.out_depth, bias);
 
         }
 
      
         public int NumInputs;
-        public int? num_neurons;
+        
         public List<Volume> filters = new List<Volume>();
         public Volume biases = new Volume();
         private double? l1_decay_mul;
@@ -38,19 +39,19 @@ namespace ConvNetLib
         public override Volume Forward(Volume v, bool tra)
         {
             this.In = v;
-            var A = new Volume(1, 1, this.OutDepth, 0.0);
-            var Vw = v.W;
+            var A = new Volume(1, 1, this.out_depth, 0.0);
+            var Vw = v.w;
 
-            for (var i = 0; i < this.OutDepth; i++)
+            for (var i = 0; i < this.out_depth; i++)
             {
                 var a = 0.0;
-                var wi = this.filters[i].W;
+                var wi = this.filters[i].w;
                 for (var d = 0; d < this.NumInputs; d++)
                 {
                     a += Vw[d] * wi[d]; // for efficiency use Vols directly for now
                 }
-                a += this.biases.W[i];
-                A.W[i] = a;
+                a += this.biases.w[i];
+                A.w[i] = a;
             }
             this.Out = A;
             return this.Out;
@@ -59,19 +60,19 @@ namespace ConvNetLib
         public override double Backward(object y)
         {
             var V = this.In;
-            V.Dw = new double[V.W.Length]; // zero out the gradient in input Vol
+            V.dw = new double[V.w.Length]; // zero out the gradient in input Vol
 
             // compute gradient wrt weights and data
-            for (var i = 0; i < this.OutDepth; i++)
+            for (var i = 0; i < this.out_depth; i++)
             {
                 var tfi = this.filters[i];
-                var chain_grad = this.Out.Dw[i];
+                var chain_grad = this.Out.dw[i];
                 for (var d = 0; d < this.NumInputs; d++)
                 {
-                    V.Dw[d] += tfi.W[d] * chain_grad; // grad wrt input data
-                    tfi.Dw[d] += V.W[d] * chain_grad; // grad wrt params
+                    V.dw[d] += tfi.w[d] * chain_grad; // grad wrt input data
+                    tfi.dw[d] += V.w[d] * chain_grad; // grad wrt params
                 }
-                this.biases.Dw[i] += chain_grad;
+                this.biases.dw[i] += chain_grad;
             }
             return 0;
         }
@@ -79,12 +80,12 @@ namespace ConvNetLib
         public override PgListItem[] GetParamsAndGrads(int y = 0)
         {
             List<PgListItem> response = new List<PgListItem>();
-            for (var i = 0; i < this.OutDepth; i++)
+            for (var i = 0; i < this.out_depth; i++)
             {
                 response.Add(new PgListItem()
                 {
-                    Params = this.filters[i].W,
-                    Grads = this.filters[i].Dw,
+                    Params = this.filters[i].w,
+                    Grads = this.filters[i].dw,
                     l1_decay_mul = l1_decay_mul,
                     l2_decay_mul = l2_decay_mul,
                 });
@@ -92,36 +93,36 @@ namespace ConvNetLib
             }
             response.Add(new PgListItem()
             {
-                Params = this.biases.W,
-                Grads = this.biases.Dw,
+                Params = this.biases.w,
+                Grads = this.biases.dw,
                 l1_decay_mul = 0.0,
                 l2_decay_mul = 0.0,
             });
             return response.ToArray();
         }
 
-        public override string GetXmlSection()
+        public override string ToXml()
         {
-            var biasesstr = biases.W.Aggregate("", (x, y) => x + y + ";");
+            var biasesstr = biases.w.Aggregate("", (x, y) => x + y + ";");
             string str = "<layer name=\"" + Name + "\" biases=\"" + biasesstr + "\">";
             foreach (var filter in filters)
             {
-                var fstr = filter.W.Aggregate("", (x, y) => x + y + ";");
+                var fstr = filter.w.Aggregate("", (x, y) => x + y + ";");
                 str += "<filter val=\"" + fstr + "\"/>";
             }
             str += "</layer>";
             return str;
         }
 
-        public override void ParseXmlSection(XElement elem)
+        public override void ParseXml(XElement elem)
         {
             var bss =
                 elem.Attribute("biases")
                     .Value.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse)
                     .ToArray();
-            for (int i = 0; i < biases.W.Count(); i++)
+            for (int i = 0; i < biases.w.Count(); i++)
             {
-                biases.W[i] = bss[i];
+                biases.w[i] = bss[i];
             }
             var array = elem.Descendants("filter").ToArray();
             for (int k = 0; k < array.Length; k++)
@@ -130,9 +131,9 @@ namespace ConvNetLib
                    array[k].Attribute("val")
                        .Value.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse)
                        .ToArray();
-                for (int i = 0; i < filters[k].W.Count(); i++)
+                for (int i = 0; i < filters[k].w.Count(); i++)
                 {
-                    filters[k].W[i] = bss[i];
+                    filters[k].w[i] = bss[i];
                 }
             }
 

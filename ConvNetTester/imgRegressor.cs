@@ -48,7 +48,7 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
             }
 
             net.Layers.Add(new FullConnLayer() { num_neurons = 3, NumInputs = neurons });
-            net.Layers.Add(new RegressionLayer() { OutDepth = 3 });
+            net.Layers.Add(new RegressionLayer() { out_depth = 3 });
                         
             trainer = new Trainer();
             trainer.batch_size = 5;
@@ -109,8 +109,8 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
                     var y = (int)NetStuff.randi(0, H);
                     var ix = ((W * y) + x) * 4;
                     var arr = bmp.GetPixel3(x, y).Select(z => z / 255.0).ToArray();
-                    v.W[0] = (x - W / 2) / (double)W;
-                    v.W[1] = (y - H / 2) / (double)H;
+                    v.w[0] = (x - W / 2) / (double)W;
+                    v.w[1] = (y - H / 2) / (double)H;
                     var stats = trainer.train(v, arr);
                     loss += stats.loss;
                     lossi += 1;
@@ -147,14 +147,14 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
             var v = new Volume(1, 1, 2);
             for (var x = 0; x < W; x++)
             {
-                v.W[0] = (x - W / 2) / (double)W;
+                v.w[0] = (x - W / 2) / (double)W;
                 for (var y = 0; y < H; y++)
                 {
-                    v.W[1] = (y - H / 2) / (double)H;
+                    v.w[1] = (y - H / 2) / (double)H;
 
                     var r = net.Forward(v, false);
                     outbmp.SetPixel(x, y,
-                        new byte[] { (byte)(255 * r.W[0]), (byte)(255 * r.W[1]), (byte)(255 * r.W[2]), 255 });
+                        new byte[] { (byte)(255 * r.w[0]), (byte)(255 * r.w[1]), (byte)(255 * r.w[2]), 255 });
 
                 }
             }
