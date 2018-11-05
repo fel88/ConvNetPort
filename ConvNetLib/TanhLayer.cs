@@ -5,8 +5,14 @@ namespace ConvNetLib
 {
     public class TanhLayer : Layer
     {
-        public TanhLayer(LayerDef def=null) : base(def)
+        public TanhLayer(LayerDef def = null) : base(def)
         {
+            var opt = def != null ? def : new LayerDef();
+
+            // computed
+            this.out_sx = opt.in_sx;
+            this.out_sy = opt.in_sy;
+            this.out_depth = opt.in_depth;            
         }
 
         public override Volume Forward(Volume v, bool training)
@@ -58,6 +64,6 @@ namespace ConvNetLib
         public override PgListItem[] GetParamsAndGrads(int y = 0)
         {
             return new PgListItem[0];
-        }      
+        }
     }
 }

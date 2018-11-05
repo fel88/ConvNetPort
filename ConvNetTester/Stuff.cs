@@ -62,7 +62,7 @@ namespace ConvNetTester
             Stopwatch sw = new Stopwatch();
             sw.Start();
             var bytes = File.ReadAllBytes(imgPath);
-            int imagesCnt = 100;
+            int imagesCnt = 10000;//10000
             long indexer = 0;
             for (int i = 0; i < imagesCnt; i++)
             {

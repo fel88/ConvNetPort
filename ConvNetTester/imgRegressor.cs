@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using ConvNetLib;
+using System.Collections.Generic;
 
 namespace ConvNetTester
 {
@@ -37,19 +38,19 @@ net.makeLayers(layer_defs);
 
 trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch_size:5, l2_decay:0.0});
            */
+            List<LayerDef> defs = new List<LayerDef>();
             net = new Net();
-            net.Layers.Add(new InputLayer());
-            net.Layers.Add(new FullConnLayer() { num_neurons = neurons, NumInputs = 2 });
+            defs.Add(new LayerDef() { type = typeof(InputLayer), out_sx = 1, out_sy = 1, out_depth = 2 });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(FullConnLayer), num_neurons = 20, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(RegressionLayer), num_neurons = 3 });
 
-            for (int i = 0; i < cnt; i++)
-            {
-                net.Layers.Add(new FullConnLayer() { num_neurons = neurons, NumInputs = neurons });
-                net.Layers.Add(new ReluLayer());
-            }
-
-            net.Layers.Add(new FullConnLayer() { num_neurons = 3, NumInputs = neurons });
-            net.Layers.Add(new RegressionLayer() { out_depth = 3 });
-                        
+            net.makeLayers(defs);
             trainer = new Trainer();
             trainer.batch_size = 5;
             trainer.net = net;
@@ -57,13 +58,13 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
             trainer.momentum = 0.9;
             trainer.learning_rate = 0.01;
             trainer.l2_decay = 0;
-            net.Init();
+
         }
 
         private Net net;
         private NetStuff stuff = new NetStuff();
         private void button1_Click(object sender, EventArgs e)
-        {            
+        {
             UpdateFiles(textBox1.Text);
         }
 
@@ -158,11 +159,11 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
 
                 }
             }
-            pictureBox2.Image = outbmp.GetBitmap();            
+            pictureBox2.Image = outbmp.GetBitmap();
         }
 
         private bool flag = false;
-        
+
         private long drawms;
         private bool pause = false;
         private void timer1_Tick(object sender, EventArgs e)
@@ -172,9 +173,9 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
 
             if (flag) return;
             flag = true;
-        
-                   // while (true)
-            {                
+
+            // while (true)
+            {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 update();
@@ -185,7 +186,7 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
                 if (outbmp != null)
                 {
 
-                    if (!(counter%mod_skip_draw != 0))
+                    if (!(counter % mod_skip_draw != 0))
                     {
                         sw = new Stopwatch();
                         sw.Start();
@@ -243,21 +244,21 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             bool temp = pause;
-           
-                if (listView1.SelectedItems.Count > 0)
-                {
-                    pause = true;
-                    
-                    var t = listView1.SelectedItems[0].Tag as FileInfo;
-                    var ld = (Bitmap)Bitmap.FromFile(t.FullName);
-                    bmp = new ReadOnlyBitmap(ld);
-                    Bitmap bmpo = new Bitmap(bmp.Width, bmp.Height);
-                    outbmp = new ReadOnlyBitmap(bmpo);
-                    pictureBox1.Image = ld;
-                    pause = temp;
-                }
 
-           
+            if (listView1.SelectedItems.Count > 0)
+            {
+                pause = true;
+
+                var t = listView1.SelectedItems[0].Tag as FileInfo;
+                var ld = (Bitmap)Bitmap.FromFile(t.FullName);
+                bmp = new ReadOnlyBitmap(ld);
+                Bitmap bmpo = new Bitmap(bmp.Width, bmp.Height);
+                outbmp = new ReadOnlyBitmap(bmpo);
+                pictureBox1.Image = ld;
+                pause = temp;
+            }
+
+
         }
 
         private void button2_Click(object sender, EventArgs e)

@@ -1209,6 +1209,12 @@ namespace ConvNetTester
 
     public static class cnnutil
     {
+        public static double f2t(double x, int? d = null)
+        {
+            if (d == null) { d = 5; }
+            var dd = 1.0 * Math.Pow(10, d.Value);
+            return Math.Floor(x * dd) / dd;
+        }
         // a window stores _size_ number of values
         // and returns averages. Useful for keeping running
         // track of validation or training accuracy during SGD
@@ -1220,7 +1226,7 @@ namespace ConvNetTester
             double sum;
 
             public Window() { }
-            public Window(int? size, int? minsize)
+            public Window(int? size, int? minsize=null)
             {
                 this.v = new List<double>();
                 this.size = size == null ? 100 : size;

@@ -4,8 +4,19 @@ namespace ConvNetLib
 {
     public class InputLayer : Layer
     {
-        public InputLayer(LayerDef def=null) : base(def)
+        public InputLayer(LayerDef def = null) : base(def)
         {
+            var opt = def != null ? def : new LayerDef();
+
+            // required: depth
+            //this.out_depth = getopt(opt, ['out_depth', 'depth'], 0);
+            this.out_depth = opt.out_depth;
+
+            // optional: default these dimensions to 1
+            //this.out_sx = getopt(opt, ['out_sx', 'sx', 'width'], 1);
+            //this.out_sy = getopt(opt, ['out_sy', 'sy', 'height'], 1);            
+            this.out_sx = opt.out_sx;
+            this.out_sy = opt.out_sy;
         }
 
         public override Volume Forward(Volume v, bool training)

@@ -19,6 +19,7 @@ namespace ConvNetTester
         public Cifar10()
         {
             InitializeComponent();
+            listView1.DoubleBuffered(true);
             Init();
         }
         Net net;
@@ -76,7 +77,6 @@ namespace ConvNetTester
             for (int i = 0; i < 5; i++)
             {
                 names.Add($"data_batch_{ i + 1}.bin");
-                break;
             }
             foreach (var item in names)
             {
@@ -112,7 +112,7 @@ namespace ConvNetTester
                 sw.Stop();
                 CifarStuff.tests.AddRange(tests);
                 SetStatusInfo("Loaded: " + (CifarStuff.items.Count + CifarStuff.tests.Count) + " images; " + sw.ElapsedMilliseconds + " ms");
-             
+
                 Invoke(this, () => { toolStripProgressBar1.Visible = false; Enabled = true; });
             });
             th.IsBackground = true;
@@ -137,19 +137,57 @@ namespace ConvNetTester
             if (CifarStuff.items.Any())
             {
                 pictureBox1.Image = CifarStuff.random_one().Bmp;
+                var t = CifarStuff.sample_test_instance();
+                net.Forward(t.x);
+                
+                
+                var p = net.getPrediction();
+                textBox8.Text = "predict: " + p;
+                if (t.label == p)
+                {
+                    textBox8.BackColor = Color.Green;
+                    textBox8.ForeColor = Color.White;
+                }
+                else
+                {
+                    textBox8.BackColor = Color.Red;
+                    textBox8.ForeColor = Color.White;
+                }
             }
         }
-        Window valAccWindow = new Window();
+
+        cnnvis.Graph lossGraph = new cnnvis.Graph();
+        Window xLossWindow = new cnnutil.Window(100);
+        Window wLossWindow = new cnnutil.Window(100);
+        Window trainAccWindow = new cnnutil.Window(100);
+        Window valAccWindow = new cnnutil.Window(100);
+        Window testAccWindow = new cnnutil.Window(50, 1);
+        int step_num = 0;
+
+        public void UpdateStats(TrainerStat stats)
+        {
+            listView1.Items.Clear();
+            // visualize training status
+            listView1.Items.Add(new ListViewItem(new string[] { "Forward time per example: ", stats.fwd_time + "ms" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Backprop time per example: ", stats.bwd_time + "ms" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss: ", cnnutil.f2t(xLossWindow.get_average()) + "ms" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss: ", cnnutil.f2t(wLossWindow.get_average()) + "ms" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy: ", (100.0 * cnnutil.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy: ", (100.0 * cnnutil.f2t(valAccWindow.get_average())).ToString("F1") + "%" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Examples seen: ", step_num + "" }) { });
+        }
         void step(CifarVolumePrepared sample)
         {
             var x = sample.x;
             var y = sample.label;
 
+
+            int yhat;
             if (sample.isval)
             {
                 // use x to build our estimate of validation error
                 net.Forward(x);
-                var yhat = net.GetPrediction();
+                yhat = net.getPrediction();
                 var val_acc = yhat == y ? 1.0 : 0.0;
                 valAccWindow.add(val_acc);
                 return; // get out
@@ -159,6 +197,18 @@ namespace ConvNetTester
             var stats = trainer.train(x, y);
             var lossx = stats.cost_loss;
             var lossw = stats.l2_decay_loss;
+
+            // keep track of stats such as the average training error and loss
+            yhat = net.getPrediction();
+            var train_acc = yhat == y ? 1.0 : 0.0;
+            xLossWindow.add(lossx);
+            wLossWindow.add(lossw);
+            trainAccWindow.add(train_acc);
+
+            UpdateStats(stats);
+
+
+            step_num++;
         }
         // loads a training image and trains on it with the network
         bool paused = true;
@@ -167,6 +217,7 @@ namespace ConvNetTester
             if (paused) return;
 
             var sample = CifarStuff.sample_training_instance();
+            pictureBox2.Image = sample.Item.Bmp;
             step(sample); // process this image
         }
         private void timer1_Tick(object sender, EventArgs e)

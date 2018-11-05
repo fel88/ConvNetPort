@@ -6,18 +6,25 @@ namespace ConvNetLib
 {
     public class ReluLayer : Layer
     {
-        public ReluLayer(LayerDef def=null) : base(def)
+        public ReluLayer(LayerDef def = null) : base(def)
         {
-        }
+            var opt = def != null ? def : new LayerDef();
 
-        public override void Init()
-        {
             // computed
-            this.out_sx = in_sx;
-            this.out_sy = in_sy;
+            this.out_sx = opt.in_sx;
+            this.out_sy = opt.in_sy;
+            this.out_depth = opt.in_depth;
 
         }
 
+        /*     public override void Init()
+             {
+                 // computed
+                 this.out_sx = in_sx;
+                 this.out_sy = in_sy;
+
+             }
+             */
 
 
         public override Volume Forward(Volume V, bool isTraining)

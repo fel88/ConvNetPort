@@ -22,21 +22,16 @@ namespace ConvNetTester
 
             trainer.net = net;
 
-            net.Layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
-
-            net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = 8, stride = 1, pad = 2, activation = ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, out_depth = 8 });
-            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, out_depth = 8 });
-
-            net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, out_depth = 16 });
-
-            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, out_depth = 16, Sx = 3, Sy = 3, stride = 3 });
-
-            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", out_depth = 10, NumInputs = 256 });
-            net.Layers.Add(new SoftmaxLayer() { in_depth = 10, in_sx = 1, in_sy = 1, NumClasses = 10 });
-
-            net.Init();
+            List<LayerDef> defs = new List<LayerDef>();
+            defs.Add(new LayerDef() { type = typeof(InputLayer), out_sx = 24, out_sy = 24, out_depth = 1 });
+            defs.Add(new LayerDef() { type = typeof(ConvLayer), filters = 8, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(PoolLayer), stride = 2, sx = 2 });
+            defs.Add(new LayerDef() { type = typeof(ConvLayer), filters = 16, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(PoolLayer), stride = 3, sx = 3 });
+            defs.Add(new LayerDef() { type = typeof(SoftmaxLayer), num_classes = 10 });
+         
+            net.makeLayers(defs);
+            
 
         }
 
@@ -48,13 +43,8 @@ namespace ConvNetTester
         //List<MnistItem> tests = new List<MnistItem>();
 
 
-        public static double f2t(double x, int? d = null)
-        {
-            if (d == null) { d = 5; }
-            var dd = 1.0 * Math.Pow(10, d.Value);
-            return Math.Floor(x * dd) / dd;
-        }
-      
+    
+
 
         string[] names = new string[]
         {
@@ -105,7 +95,7 @@ namespace ConvNetTester
 
             net.Forward(prep.x[0] as Volume, false);
 
-            var p = net.GetPrediction();
+            var p = net.getPrediction();
             textBox8.Text = "predict: " + p;
             if (prep.label == p)
             {
@@ -193,7 +183,7 @@ namespace ConvNetTester
 
         public void test_predict()
         {
-            var num_classes = net.Layers[net.Layers.Count - 1].out_depth;
+            var num_classes = net.layers[net.layers.Count - 1].out_depth;
             var num_total = 0;
             var num_correct = 0;
             //document.getElementById('testset_acc').innerHTML = '';
@@ -289,7 +279,7 @@ namespace ConvNetTester
             flowLayoutPanel1.Controls.Add(panel);
 
             var mma = simplify.maxmin(layer.Out.w);
-            var t = "max activation: " + f2t(mma.maxv) + ", min: " + f2t(mma.minv);
+            var t = "max activation: " + cnnutil. f2t(mma.maxv) + ", min: " + cnnutil.f2t(mma.minv);
             TextBox tb = new TextBox();
             tb.Text = t;
             tb.Width = 300;
@@ -305,7 +295,7 @@ namespace ConvNetTester
             {
                 // use x to build our estimate of validation error
                 net.Forward(sample.x, true);
-                yhat = net.GetPrediction();
+                yhat = net.getPrediction();
                 var val_acc = yhat == sample.label ? 1.0 : 0.0;
                 valAccWindow.add(val_acc);
                 return; // get out
@@ -316,7 +306,7 @@ namespace ConvNetTester
             var lossw = stats.l2_decay_loss;
 
             // keep track of stats such as the average training error and loss
-            yhat = net.GetPrediction();
+            yhat = net.getPrediction();
             var train_acc = yhat == sample.label ? 1.0 : 0.0;
             xLossWindow.add(lossx);
             wLossWindow.add(lossw);
@@ -432,7 +422,7 @@ namespace ConvNetTester
                     var prep = MnistStuff.sample_training_instance();
                     step(prep);
                     pictureBox2.Image = (Bitmap)MnistStuff.lastitem.GetBitmap().GetBitmap();
-                    var p = net.GetPrediction();
+                    var p = net.getPrediction();
                     sw.Stop();
                     //if (checkBox2.Checked)
                     {
@@ -449,12 +439,12 @@ namespace ConvNetTester
                     //var pred = net.GetPrediction();
                     updateStats();
                     flowLayoutPanel1.Controls.Clear();
-                    for (int i = 0; i < net.Layers.Count; i++)
+                    for (int i = 0; i < net.layers.Count; i++)
                     {
-                        if (net.Layers[i] is SoftmaxLayer)
+                        if (net.layers[i] is SoftmaxLayer)
                         {
 
-                            AppendLayerVisualization(net.Layers[i]);
+                            AppendLayerVisualization(net.layers[i]);
                         }
 
                     }
@@ -468,10 +458,10 @@ namespace ConvNetTester
         {
 
             listView1.Items.Clear();
-            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss", f2t(xLossWindow.get_average()) + "" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss", f2t(wLossWindow.get_average()) + "" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy", (100.0 * mnist.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy", (100.0 * mnist.f2t(valAccWindow.get_average())).ToString("F1") + "%" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss", cnnutil.f2t(xLossWindow.get_average()) + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss", cnnutil.f2t(wLossWindow.get_average()) + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy", (100.0 * cnnutil.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy", (100.0 * cnnutil.f2t(valAccWindow.get_average())).ToString("F1") + "%" }));
             listView1.Items.Add(new ListViewItem(new string[] { "Examples seen", MnistStuff.step_num + "" }));
 
         }

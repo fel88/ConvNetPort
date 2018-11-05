@@ -87,6 +87,42 @@ namespace ConvNetTester
     public class CifarStuff
     {
         public static bool use_validation_data = true;
+        public static CifarVolumePrepared sample_test_instance()
+        {
+
+            
+            var k = (int)Math.Floor(Rand.NextDouble() * tests.Count); // sample within the batch
+            
+            // fetch the appropriate row of the training image and reshape into a Vol
+            var item = tests[k];
+            var p = item.Bmp;
+            var x = new Volume(32, 32, 3, 0.0);
+            var W = 32 * 32;
+            var j = 0;
+            for (var dc = 0; dc < 3; dc++)
+            {
+                var i = 0;
+                for (var xc = 0; xc < 32; xc++)
+                {
+
+                    for (var yc = 0; yc < 32; yc++)
+                    {
+                        var px = p.GetPixel(xc, yc);
+                        var bt = (byte)((px.ToArgb() & (dc << 8)) >> 8);
+                        var ix = ((W * k) + i) * 4 + dc;
+                        x.Set(yc, xc, dc, bt / 255.0 - 0.5);
+                        i++;
+                    }
+                }
+            }
+
+            var dx = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
+            var dy = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
+
+            x = Volume.Augment(x, 32, dx, dy, Rand.NextDouble() < 0.5); //maybe flip horizontally
+            
+            return new CifarVolumePrepared() { x = x, label = item.label,  Item = item };
+        }
         public static CifarVolumePrepared sample_training_instance()
         {
 

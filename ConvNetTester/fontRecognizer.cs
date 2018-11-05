@@ -62,30 +62,44 @@ namespace ConvNetTester
                 symbols.Add(s);
                 tags.Add(s);
             }
-            
-            trainer = new Trainer() { method = TrainerMethodEnum.adadelta, batch_size = 20, l2_decay = 0.001 };            
+
+            trainer = new Trainer() { method = TrainerMethodEnum.adadelta, batch_size = 20, l2_decay = 0.001 };
             net = new Net();
 
             trainer.net = net;
 
-            net.Layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
+            
             int fcnt = 16;
-            net.Layers.Add(new ConvLayer() { Name = "conv1", in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = fcnt, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, out_depth = fcnt });
-            net.Layers.Add(new PoolLayer() { Name = "pool1", Sx = 2, Sy = 2, in_sx = 24, in_sy = 24, stride = 2, out_depth = fcnt });
 
-            net.Layers.Add(new ConvLayer() { Name = "conv2", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation =  ActivationEnum.relu });
-            net.Layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, out_depth = 16 });
-            net.Layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, out_depth = 16, Sx = 3, Sy = 3, stride = 3 });
+            //net.layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
+            ////var def1 = new LayerDef() { type = typeof(ConvLayer), filters = 16, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu };
+            ////net.layers.Add(new ConvLayer(def1));
+            //net.layers.Add(new ConvLayer() { Name = "conv1", out_depth=fcnt, in_sx = 24, in_sy = 24, sx = 5, sy = 5, in_depth = 1, filtersCnt = fcnt, stride = 1, pad = 2, activation = ActivationEnum.relu });
+            //net.layers.Add(new ReluLayer() { Name = "relu1", in_sx = 24, in_sy = 24, out_depth = fcnt });
+            //net.layers.Add(new PoolLayer() { Name = "pool1", sx = 2, sy = 2, in_sx = 24, in_sy = 24, stride = 2, out_depth = fcnt });
 
-            /*net.Layers.Add(new ConvLayer() { Name = "conv3", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation = "relu" });
-            net.Layers.Add(new ReluLayer() { Name = "relu3", in_sx = 12, in_sy = 12, OutDepth = 16 });
-            net.Layers.Add(new PoolLayer() { Name = "pool3", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });
-            */
-            net.Layers.Add(new FullConnLayer() { Name = "fullConn1", out_depth = symbols.Count, NumInputs = 256 });
-            net.Layers.Add(new SoftmaxLayer() { in_depth = symbols.Count, in_sx = 1, in_sy = 1, NumClasses = symbols.Count });
+            //net.layers.Add(new ConvLayer() { Name = "conv2", out_depth = fcnt, in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation = ActivationEnum.relu });
+            //net.layers.Add(new ReluLayer() { Name = "relu2", in_sx = 12, in_sy = 12, out_depth = 16 });
+            //net.layers.Add(new PoolLayer() { Name = "pool2", in_sx = 12, in_sy = 12, out_depth = 16, sx = 3, sy = 3, stride = 3 });
 
-            net.Init();
+            ///*net.Layers.Add(new ConvLayer() { Name = "conv3", in_sx = 12, in_sy = 12, sx = 5, sy = 5, in_depth = 1, filtersCnt = 16, stride = 1, pad = 2, activation = "relu" });
+            //net.Layers.Add(new ReluLayer() { Name = "relu3", in_sx = 12, in_sy = 12, OutDepth = 16 });
+            //net.Layers.Add(new PoolLayer() { Name = "pool3", in_sx = 12, in_sy = 12, OutDepth = 16, Sx = 3, Sy = 3, stride = 3 });
+            //*/
+            //net.layers.Add(new FullConnLayer() { Name = "fullConn1", out_depth = symbols.Count, num_inputs = 256 });
+            //net.layers.Add(new SoftmaxLayer() { in_depth = symbols.Count, in_sx = 1, in_sy = 1, num_classes = symbols.Count });
+
+            List<LayerDef> defs = new List<LayerDef>();
+            defs.Add(new LayerDef() { type = typeof(InputLayer), out_sx = 24, out_sy = 24, out_depth = 1 });
+            defs.Add(new LayerDef() { type = typeof(ConvLayer), filters = 16, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(PoolLayer), stride = 2, sx = 2 });
+            defs.Add(new LayerDef() { type = typeof(ConvLayer), filters = 16, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu });
+            defs.Add(new LayerDef() { type = typeof(PoolLayer), stride = 3, sx = 3 });
+
+            defs.Add(new LayerDef() { type = typeof(SoftmaxLayer), in_sx = 1, in_sy = 1, num_classes = symbols.Count });
+
+            net.makeLayers(defs);            
+
             LoadItems();
             LoadTests();
         }
@@ -179,7 +193,7 @@ namespace ConvNetTester
         }
         public void test_predict()
         {
-            var num_classes = net.Layers[net.Layers.Count - 1].out_depth;
+            var num_classes = net.layers[net.layers.Count - 1].out_depth;
             var num_total = 0;
             var num_correct = 0;
             //document.getElementById('testset_acc').innerHTML = '';
@@ -326,7 +340,7 @@ namespace ConvNetTester
             {
                 // use x to build our estimate of validation error
                 net.Forward(sample.x, true);
-                yhat = net.GetPrediction();
+                yhat = net.getPrediction();
                 var val_acc = yhat == sample.label ? 1.0 : 0.0;
                 valAccWindow.add(val_acc);
                 return; // get out
@@ -337,7 +351,7 @@ namespace ConvNetTester
             var lossw = stats.l2_decay_loss;
 
             // keep track of stats such as the average training error and loss
-            yhat = net.GetPrediction();
+            yhat = net.getPrediction();
             var train_acc = yhat == sample.label ? 1.0 : 0.0;
             xLossWindow.add(lossx);
             wLossWindow.add(lossw);
@@ -380,7 +394,7 @@ namespace ConvNetTester
                 var prep = FontRecognizerStuff.sample_training_instance();
                 step(prep);
                 pictureBox2.Image = (Bitmap)FontRecognizerStuff.lastitem.GetBitmap().GetBitmap();
-                var p = net.GetPrediction();
+                var p = net.getPrediction();
                 sw.Stop();
                 //  if (checkBox2.Checked)
                 {
@@ -400,10 +414,10 @@ namespace ConvNetTester
         public void updateStats()
         {
             listView1.Items.Clear();
-            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss", mnist.f2t(xLossWindow.get_average()) + "" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss", mnist.f2t(wLossWindow.get_average()) + "" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy", (100.0 * mnist.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }));
-            listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy", (100.0 * mnist.f2t(valAccWindow.get_average())).ToString("F1") + "%" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss", cnnutil.f2t(xLossWindow.get_average()) + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss", cnnutil.f2t(wLossWindow.get_average()) + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy", (100.0 * cnnutil.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy", (100.0 * cnnutil.f2t(valAccWindow.get_average())).ToString("F1") + "%" }));
             listView1.Items.Add(new ListViewItem(new string[] { "Examples seen", FontRecognizerStuff.step_num + "" }));
         }
 
@@ -611,7 +625,7 @@ namespace ConvNetTester
         {
             pause = !pause;
         }
-             
+
 
         public void AddLog(string text)
         {

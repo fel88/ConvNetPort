@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConvNetLib
 {
@@ -10,7 +11,7 @@ namespace ConvNetLib
         public List<int> labels;
 
         static Random r = new Random();
-        
+
         public static int randi(double a, double b)
         {
             lock (r)
@@ -187,19 +188,26 @@ namespace ConvNetLib
         public Net Test1()
         {
             Net net1 = new Net();
-            net1.Layers.Add(new InputLayer() { out_depth = 2 });
+            List<LayerDef> defs = new List<ConvNetLib.LayerDef>();
+            defs.Add(new ConvNetLib.LayerDef() { type = typeof(InputLayer), out_sx = 1, out_sy = 1, out_depth = 2 });
+            defs.Add(new ConvNetLib.LayerDef() { type = typeof(FullConnLayer), num_neurons = 6, activation = ActivationEnum.tahn });
+            defs.Add(new ConvNetLib.LayerDef() { type = typeof(FullConnLayer), num_neurons = 2, activation = ActivationEnum.tahn });
+            defs.Add(new ConvNetLib.LayerDef() { type = typeof(SoftmaxLayer), num_classes = 2 });
+            
+            net1.makeLayers(defs);
+            //net1.layers.Add(new InputLayer() { out_depth = 2 });
 
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn1", NumInputs = 2, out_depth = 16 });
-            net1.Layers.Add(new TanhLayer() { Name = "tanh1", out_depth = 16 });
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn2", NumInputs = 16, out_depth = 2 });
-            net1.Layers.Add(new TanhLayer() { Name = "tanh2", out_depth = 2 });
-            net1.Layers.Add(new FullConnLayer() { Name = "fullConn3", NumInputs = 2, out_depth = 2 });
-            net1.Layers.Add(new SoftmaxLayer() { NumInputs = 2, in_depth = 2, in_sx = 1, in_sy = 1, out_depth = 2 });
+            /*net1.layers.Add(new FullConnLayer() { Name = "fullConn1", num_inputs = 2, out_depth = 16 });
+            net1.layers.Add(new TanhLayer() { Name = "tanh1", out_depth = 16 });
+            net1.layers.Add(new FullConnLayer() { Name = "fullConn2", num_inputs = 16, out_depth = 2 });
+            net1.layers.Add(new TanhLayer() { Name = "tanh2", out_depth = 2 });
+            net1.layers.Add(new FullConnLayer() { Name = "fullConn3", num_inputs = 2, out_depth = 2 });
+            net1.layers.Add(new SoftmaxLayer() { num_inputs = 2, in_depth = 2, in_sx = 1, in_sy = 1, out_depth = 2 });*/
 
-            foreach (var layer in net1.Layers)
+            /*foreach (var layer in net1.layers)
             {
                 layer.Init();
-            }
+            }*/
             return net1;
         }
     }

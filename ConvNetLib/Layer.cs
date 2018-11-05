@@ -10,15 +10,13 @@ namespace ConvNetLib
         public int num_inputs;
 
         public  Layer(LayerDef def) { }
-        public virtual void Init()
-        {
-        }
+        
 
         public int out_sx;
         public int out_sy;
 
-        public int Sx;
-        public int Sy;
+        public int? sx;
+        public int? sy;
 
         public ActivationEnum? activation;
         public int out_depth;

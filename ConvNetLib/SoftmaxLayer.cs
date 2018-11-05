@@ -6,24 +6,32 @@ namespace ConvNetLib
 {
     public class SoftmaxLayer : Layer
     {
-        public int NumInputs;
 
-        public int NumClasses;
+
+
         private double[] es;
 
-        public SoftmaxLayer(LayerDef def=null) : base(def)
+        public SoftmaxLayer(LayerDef def = null) : base(def)
         {
-        }
+            var opt = def != null ? def : new LayerDef();
 
-        public override void Init()
-        {
-            this.NumInputs = in_sx * in_sy * in_depth;
-            this.out_depth = this.NumInputs;
+            // computed
+            this.num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
+            this.out_depth = this.num_inputs;
             this.out_sx = 1;
             this.out_sy = 1;
+
         }
 
-        
+        /*     public override void Init()
+             {
+                 this.NumInputs = in_sx * in_sy * in_depth;
+                 this.out_depth = this.NumInputs;
+                 this.out_sx = 1;
+                 this.out_sy = 1;
+             }
+             */
+
 
         public override Volume Forward(Volume v, bool training)
         {
@@ -102,14 +110,14 @@ namespace ConvNetLib
 
         public override void ParseXml(XElement elem)
         {
-            var ess = elem.Attribute("es").Value.Split(new string[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+            var ess = elem.Attribute("es").Value.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < ess.Count(); i++)
             {
                 es[i] = double.Parse(ess[i]);
             }
-            
+
         }
     }
 
-   
+
 }

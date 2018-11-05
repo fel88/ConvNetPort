@@ -4,8 +4,19 @@ namespace ConvNetLib
 {
     public class RegressionLayer : Layer
     {
-        public RegressionLayer(LayerDef def=null) : base(def)
+        // implements an L2 regression cost layer,
+        // so penalizes \sum_i(||x_i - y_i||^2), where x is its input
+        // and y is the user-provided array of "correct" values.
+        public RegressionLayer(LayerDef def = null) : base(def)
         {
+            var opt = def != null ? def : new LayerDef();
+
+            // computed
+            this.num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
+            this.out_depth = this.num_inputs;
+            this.out_sx = 1;
+            this.out_sy = 1;
+
         }
 
         public override Volume Forward(Volume V, bool isTraining)
@@ -15,15 +26,6 @@ namespace ConvNetLib
             return V; // identity function
         }
 
-        public override void Init()
-        {
-            // computed
-            /*num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
-            this.out_depth = this.num_inputs;
-            this.out_sx = 1;
-            this.out_sy = 1;
-            this.layer_type = 'regression';*/
-        }
 
         public override double Backward(object yy)
         {
@@ -67,7 +69,7 @@ namespace ConvNetLib
             return new PgListItem[0];
         }
 
-      
+
     }
 
     public class UnknownClass1

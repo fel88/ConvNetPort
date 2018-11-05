@@ -9,13 +9,33 @@ namespace ConvNetLib
     public class FullConnLayer : Layer
     {
 
-        public FullConnLayer(LayerDef def=null):base(def)
+        public FullConnLayer(LayerDef def = null) : base(def)
         {
-            l2_decay_mul = 1;
-            l1_decay_mul = 0;
+            var opt = def != null ? def : new LayerDef();
+
+            // required
+            // ok fine we will allow 'filters' as the word as well
+            this.out_depth =  opt.num_neurons != null ? opt.num_neurons.Value : opt.filters;
+
+            // optional 
+            this.l1_decay_mul =  opt.l1_decay_mul != null ? opt.l1_decay_mul : 0.0;
+            this.l2_decay_mul =  opt.l2_decay_mul != null ? opt.l2_decay_mul : 1.0;
+
+            // computed
+            this.num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
+            this.out_sx = 1;
+            this.out_sy = 1;
+            
+
+            // initializations
+            var bias =  opt.bias_pref != null ? opt.bias_pref : 0.0;
+            this.filters = new List<ConvNetLib.Volume>();
+            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(1, 1, this.num_inputs)); }
+            this.biases = new Volume(1, 1, this.out_depth, bias.Value);
+
         }
-        
-        public override void Init()
+
+        /*public override void Init()
         {
             if (num_neurons != null)
             {
@@ -26,11 +46,11 @@ namespace ConvNetLib
             for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(1, 1, this.NumInputs)); }
             this.biases = new Volume(1, 1, this.out_depth, bias);
 
-        }
+        }*/
 
-     
-        public int NumInputs;
+
         
+
         public List<Volume> filters = new List<Volume>();
         public Volume biases = new Volume();
         private double? l1_decay_mul;
@@ -46,7 +66,7 @@ namespace ConvNetLib
             {
                 var a = 0.0;
                 var wi = this.filters[i].w;
-                for (var d = 0; d < this.NumInputs; d++)
+                for (var d = 0; d < this.num_inputs; d++)
                 {
                     a += Vw[d] * wi[d]; // for efficiency use Vols directly for now
                 }
@@ -67,7 +87,7 @@ namespace ConvNetLib
             {
                 var tfi = this.filters[i];
                 var chain_grad = this.Out.dw[i];
-                for (var d = 0; d < this.NumInputs; d++)
+                for (var d = 0; d < this.num_inputs; d++)
                 {
                     V.dw[d] += tfi.w[d] * chain_grad; // grad wrt input data
                     tfi.dw[d] += V.w[d] * chain_grad; // grad wrt params

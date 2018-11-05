@@ -9,7 +9,7 @@ namespace ConvNetLib
     {
 
 
-        public override void Init()
+        /*public override void Init()
         {
             out_depth = filtersCnt;
             this.out_sx = (int)Math.Floor((double)((this.in_sx + this.pad * 2 - this.sx) / this.stride + 1));
@@ -17,15 +17,13 @@ namespace ConvNetLib
 
             var bias = bias_pref != null ? bias_pref.Value : 0.0;
             this.filters = new List<Volume>();
-            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(this.sx, this.sy, this.in_depth)); }
+            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(this.sx.Value, this.sy.Value, this.in_depth)); }
             this.biases = new Volume(1, 1, this.out_depth, bias);
         }
+        */
 
 
-
-        public int sy;
-        public int sx;
-
+        
         public int? stride;
 
 
@@ -167,7 +165,7 @@ namespace ConvNetLib
             // initializations
             var bias = opt.bias_pref != null ? opt.bias_pref : 0.0;
             this.filters = new List<ConvNetLib.Volume>();
-            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(this.sx, this.sy, this.in_depth)); }
+            for (var i = 0; i < this.out_depth; i++) { this.filters.Add(new Volume(this.sx.Value, this.sy.Value, this.in_depth)); }
             this.biases = new Volume(1, 1, this.out_depth, bias.Value);
         }
 
