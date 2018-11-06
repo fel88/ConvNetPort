@@ -4,6 +4,7 @@ namespace ConvNetLib
 {
     public class InputLayer : Layer
     {
+        
         public InputLayer(LayerDef def = null) : base(def)
         {
             var opt = def != null ? def : new LayerDef();
@@ -21,9 +22,16 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume v, bool training)
         {
-            In = v;
-            Out = v;
-            return Out;
+            in_act = v;
+            out_act = v;
+            return out_act;
+        }
+
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx= json["out_sx"];
+            this.out_sy= json["out_sy"];
         }
 
         public override string ToXml()

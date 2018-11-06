@@ -8,17 +8,31 @@ namespace ConvNetLib
     {
 
 
-       
+
 
         private int[] switchx;
         private int[] switchy;
         private int? pad = 0;
 
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx = json["out_sx"];
+            this.out_sy = json["out_sy"];
+
+            this.sx = json["sx"];
+            this.sy = json["sy"];
+            this.stride = json["stride"];
+            this.in_depth = json["in_depth"];
+            this.pad = json["pad"] != null ? json["pad"] : 0; // backwards compatibility
+            this.switchx = new int[(this.out_sx * this.out_sy * this.out_depth)]; // need to re-init these appropriately
+            this.switchy = new int[this.out_sx * this.out_sy * this.out_depth];
+        }
 
 
 
         public int? stride = 2;
-        
+
 
         public PoolLayer(LayerDef def = null) : base(def)
         {
@@ -32,7 +46,7 @@ namespace ConvNetLib
 
             // optional
             this.sy = opt.sy != null ? opt.sy : this.sx;
-            this.stride = opt.stride !=null  ? opt.stride : 2;
+            this.stride = opt.stride != null ? opt.stride : 2;
             this.pad = opt.pad != null ? opt.pad : 0; // amount of 0 padding to add around borders of input volume
 
             // computed
@@ -47,7 +61,7 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume vin, bool training)
         {
-            this.In = vin;
+            this.in_act = vin;
 
             var A = new Volume(this.out_sx, this.out_sy, this.out_depth, 0.0);
 
@@ -93,8 +107,8 @@ namespace ConvNetLib
                     }
                 }
             }
-            this.Out = A;
-            return this.Out;
+            this.out_act = A;
+            return this.out_act;
         }
 
 
@@ -103,9 +117,9 @@ namespace ConvNetLib
 
             // pooling layers have no parameters, so simply compute 
             // gradient wrt data here
-            var V = this.In;
+            var V = this.in_act;
             V.dw = new double[V.w.Length]; // zero out gradient wrt data
-            var A = this.Out; // computed in forward pass 
+            var A = this.out_act; // computed in forward pass 
 
             var n = 0;
             for (var d = 0; d < this.out_depth; d++)
@@ -118,7 +132,7 @@ namespace ConvNetLib
                     for (var ay = 0; ay < this.out_sy; y += this.stride, ay++)
                     {
 
-                        var chain_grad = this.Out.get_grad(ax, ay, d);
+                        var chain_grad = this.out_act.get_grad(ax, ay, d);
                         V.add_grad(this.switchx[n], this.switchy[n], d, chain_grad);
                         n++;
 

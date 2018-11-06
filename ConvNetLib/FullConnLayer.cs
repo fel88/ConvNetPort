@@ -34,6 +34,25 @@ namespace ConvNetLib
             this.biases = new Volume(1, 1, this.out_depth, bias.Value);
 
         }
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx = json["out_sx"];
+            this.out_sy = json["out_sy"];
+            
+            this.num_inputs = json["num_inputs"];
+            this.l1_decay_mul = json["l1_decay_mul"] != null ? json["l1_decay_mul"] : 1.0;
+            this.l2_decay_mul = json["l2_decay_mul"] != null ? json["l2_decay_mul"] : 1.0;
+            this.filters = new List<ConvNetLib.Volume> ();
+            for (var i = 0; i < json["filters"].Length; i++)
+            {
+                var v = new Volume(0, 0, 0, 0);
+                v.fromJSON(json["filters"].GetValue(i));
+                this.filters.Add(v);
+            }
+            this.biases = new Volume(0, 0, 0, 0);
+            this.biases.fromJSON(json["biases"]);
+        }
 
         /*public override void Init()
         {
@@ -49,7 +68,7 @@ namespace ConvNetLib
         }*/
 
 
-        
+
 
         public List<Volume> filters = new List<Volume>();
         public Volume biases = new Volume();
@@ -58,7 +77,7 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume v, bool tra)
         {
-            this.In = v;
+            this.in_act = v;
             var A = new Volume(1, 1, this.out_depth, 0.0);
             var Vw = v.w;
 
@@ -73,20 +92,20 @@ namespace ConvNetLib
                 a += this.biases.w[i];
                 A.w[i] = a;
             }
-            this.Out = A;
-            return this.Out;
+            this.out_act = A;
+            return this.out_act;
         }
 
         public override double Backward(object y)
         {
-            var V = this.In;
+            var V = this.in_act;
             V.dw = new double[V.w.Length]; // zero out the gradient in input Vol
 
             // compute gradient wrt weights and data
             for (var i = 0; i < this.out_depth; i++)
             {
                 var tfi = this.filters[i];
-                var chain_grad = this.Out.dw[i];
+                var chain_grad = this.out_act.dw[i];
                 for (var d = 0; d < this.num_inputs; d++)
                 {
                     V.dw[d] += tfi.w[d] * chain_grad; // grad wrt input data

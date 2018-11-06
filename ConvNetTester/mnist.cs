@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using ConvNetLib;
+using System.Text;
 
 namespace ConvNetTester
 {
@@ -29,9 +30,9 @@ namespace ConvNetTester
             defs.Add(new LayerDef() { type = typeof(ConvLayer), filters = 16, pad = 2, stride = 1, sx = 5, activation = ActivationEnum.relu });
             defs.Add(new LayerDef() { type = typeof(PoolLayer), stride = 3, sx = 3 });
             defs.Add(new LayerDef() { type = typeof(SoftmaxLayer), num_classes = 10 });
-         
+
             net.makeLayers(defs);
-            
+
 
         }
 
@@ -43,7 +44,7 @@ namespace ConvNetTester
         //List<MnistItem> tests = new List<MnistItem>();
 
 
-    
+
 
 
         string[] names = new string[]
@@ -87,6 +88,7 @@ namespace ConvNetTester
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (!MnistStuff.tests.Any()) return;
             //cnt++;
             var prep = MnistStuff.sample_test_instance();
 
@@ -278,8 +280,8 @@ namespace ConvNetTester
             //   panel.Controls.Add(pb);
             flowLayoutPanel1.Controls.Add(panel);
 
-            var mma = simplify.maxmin(layer.Out.w);
-            var t = "max activation: " + cnnutil. f2t(mma.maxv) + ", min: " + cnnutil.f2t(mma.minv);
+            var mma = simplify.maxmin(layer.out_act.w);
+            var t = "max activation: " + cnnutil.f2t(mma.maxv) + ", min: " + cnnutil.f2t(mma.minv);
             TextBox tb = new TextBox();
             tb.Text = t;
             tb.Width = 300;
@@ -481,8 +483,75 @@ namespace ConvNetTester
         {
 
         }
+
+
     }
 
+    public class JsonObject
+    {
+        public List<JsonProperty> Properties = new List<JsonProperty>();
+        public static JsonObject Parse(JsonParseContext ctx)
+        {
+            JsonObject ret = new ConvNetTester.JsonObject();
+            StringBuilder sb = new StringBuilder();
+            for (; ctx.Position < ctx.Text.Length; ctx.Position++)
+            {
+                var symb = ctx.Text[ctx.Position];
 
 
+                if (symb == '{' || symb == '\"')
+                {
+                    continue;
+                }
+
+                if (symb == ':')
+                {
+                    ret.Properties.Add(new ConvNetTester.JsonProperty() { Name = sb.ToString() });
+                    sb.Clear();
+                    continue;
+                }
+                if (symb == ',' || symb == '}')
+                {
+                    var s = sb.ToString();
+                    if (s.Contains('{'))
+                    {
+                        ret.Properties.Last().Value = Parse(ctx);
+                    }
+                    else
+                    {
+                        ret.Properties.Last().Value = s;
+                    }
+
+                    sb.Clear();
+                    continue;
+                }
+                if (symb == '}')
+                    break;
+                sb.Append(symb);
+
+
+            }
+            return ret;
+        }
+    }
+
+    public class JsonArray
+    {
+        public static JsonArray Parse(JsonParseContext ctx)
+        {
+            JsonArray ret = new JsonArray();
+            return ret;
+        }
+    }
+
+    public class JsonProperty
+    {
+        public string Name;
+        public object Value;
+    }
+    public class JsonParseContext
+    {
+        public string Text;
+        public int Position;
+    }
 }

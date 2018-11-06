@@ -9,9 +9,9 @@ namespace ConvNetLib
         public Volume out_act;
         public int num_inputs;
 
+        
         public  Layer(LayerDef def) { }
         
-
         public int out_sx;
         public int out_sy;
 
@@ -20,14 +20,18 @@ namespace ConvNetLib
 
         public ActivationEnum? activation;
         public int out_depth;
-        public Volume In;
-        public Volume Out;
+        
+        
         public int? num_classes;
         public int? num_neurons;
         public double? bias_pref;
         public int? group_size;
         public object drop_prob;
-                
+
+        public virtual void fromJson(dynamic json)
+        {
+        }
+        
         public int in_sx;
         public int in_sy;
         

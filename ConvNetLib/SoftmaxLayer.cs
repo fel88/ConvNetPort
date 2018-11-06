@@ -23,6 +23,15 @@ namespace ConvNetLib
 
         }
 
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx = json["out_sx"];
+            this.out_sy = json["out_sy"];
+            
+            this.num_inputs = json["num_inputs"];
+        }
+
         /*     public override void Init()
              {
                  this.NumInputs = in_sx * in_sy * in_depth;
@@ -35,7 +44,7 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume v, bool training)
         {
-            this.In = v;
+            this.in_act = v;
 
             var A = new Volume(1, 1, this.out_depth, 0.0);
 
@@ -65,8 +74,8 @@ namespace ConvNetLib
             }
 
             this.es = es; // save these for backprop
-            this.Out = A;
-            return this.Out;
+            this.out_act = A;
+            return this.out_act;
         }
 
         public override double Backward(object yy)
@@ -82,7 +91,7 @@ namespace ConvNetLib
             }
 
             // compute and accumulate gradient wrt weights and bias of this layer
-            var x = this.In;
+            var x = this.in_act;
             x.dw = new double[x.w.Length]; // zero out the gradient of input Vol
 
             for (var i = 0; i < this.out_depth; i++)

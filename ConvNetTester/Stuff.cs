@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvNetLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -20,24 +21,31 @@ namespace ConvNetTester
             return res;
 
         }
-        public static CifarImg ReadCifarImage(byte[] bb, long start)
+        public static CifarVolumePrepared ReadCifarImage(byte[] bb, long start)
         {
             var w = 32;
             var h = 32;
             Bitmap bmp = new Bitmap(32, 32);
             var label = bb[start];
-            CifarImg ret = new ConvNetTester.CifarImg();
+            CifarVolumePrepared ret = new CifarVolumePrepared();
             ret.label = label;
             start++;
+
+            NativeBitmap b = new NativeBitmap(bmp);
+
+
             for (int j = 0; j < h; j++)
             {
                 for (int i = 0; i < w; i++)
                 {
-                    var ind = i * w + j;
-                    bmp.SetPixel(j, i, Color.FromArgb(bb[start + ind], bb[start + 1024 + ind], bb[start + 2048 + ind]));
+                    var _ind = (i * w + j);
+                    b.SetPixel(j, i, new byte[] {  bb[start + _ind], bb[start + 1024 + _ind], bb[start + 2048 + _ind] , 0xff });
                 }
             }
-            ret.Bmp = bmp;
+
+            ret.Bmp = b.GetBitmap();
+
+                        
             return ret;
         }
 
@@ -55,9 +63,9 @@ namespace ConvNetTester
             }
             return new MnistItem() { Data = data };
         }
-        public static CifarImg[] LoadCifarImages(string imgPath, Action<float> progressReport, bool withBitmap = false)
+        public static CifarVolumePrepared[] LoadCifarImages(string imgPath, Action<float> progressReport, bool withBitmap = false)
         {
-            List<CifarImg> bmps = new List<CifarImg>();
+            List<CifarVolumePrepared> bmps = new List<CifarVolumePrepared>();
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -88,8 +96,8 @@ namespace ConvNetTester
             sw.Stop();
             var ms2 = sw.ElapsedMilliseconds;
             sw.Stop();
-            
-                        
+
+
 
             return bmps.ToArray();
 

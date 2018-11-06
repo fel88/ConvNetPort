@@ -28,15 +28,15 @@ namespace ConvNetLib
               this.out_act = V2;
               return this.out_act;*/
 
-            In = v;
-            Volume v2 = new Volume(v.sx, v.sy, v.Depth);
+            in_act = v;
+            Volume v2 = new Volume(v.sx, v.sy, v.depth);
             var N = v.w.Length;
             for (var i = 0; i < N; i++)
             {
                 v2.w[i] = tanh(v.w[i]);
             }
-            Out = v2;
-            return Out;
+            out_act = v2;
+            return out_act;
         }
 
         public static double tanh(double x)
@@ -48,8 +48,8 @@ namespace ConvNetLib
         public override double Backward(object y)
         {
 
-            var V = In; // we need to set dw of this
-            var V2 = Out;
+            var V = in_act; // we need to set dw of this
+            var V2 = out_act;
             var N = V.w.Length;
             V.dw = new double[N]; // zero out gradient wrt data
             for (var i = 0; i < N; i++)

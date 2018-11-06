@@ -23,7 +23,7 @@ namespace ConvNetLib
         */
 
 
-        
+
         public int? stride;
 
 
@@ -36,7 +36,7 @@ namespace ConvNetLib
         {
             // optimized code by @mdda that achieves 2x speedup over previous version
 
-            this.In = V;
+            this.in_act = V;
             var A = new Volume(this.out_sx, this.out_sy, this.out_depth, 0.0);
 
             var V_sx = V.sx;
@@ -64,10 +64,10 @@ namespace ConvNetLib
                                 var ox = x + fx;
                                 if (oy >= 0 && oy < V_sy && ox >= 0 && ox < V_sx)
                                 {
-                                    for (var fd = 0; fd < f.Depth; fd++)
+                                    for (var fd = 0; fd < f.depth; fd++)
                                     {
                                         // avoid function call overhead (x2) for efficiency, compromise modularity :(
-                                        a += f.w[((f.sx * fy) + fx) * f.Depth + fd] * V.w[((V_sx * oy) + ox) * V.Depth + fd];
+                                        a += f.w[((f.sx * fy) + fx) * f.depth + fd] * V.w[((V_sx * oy) + ox) * V.depth + fd];
                                     }
                                 }
                             }
@@ -81,14 +81,14 @@ namespace ConvNetLib
             {
 
             }
-            this.Out = A;
-            return this.Out;
+            this.out_act = A;
+            return this.out_act;
         }
 
         public override double Backward(object yy)
         {
 
-            var V = this.In;
+            var V = this.in_act;
             V.dw = new double[V.w.Length]; // zero out gradient wrt bottom data, we're about to fill it
 
             var V_sx = V.sx;
@@ -107,7 +107,7 @@ namespace ConvNetLib
                     {  // xy_stride
 
                         // convolve centered at this particular location
-                        var chain_grad = this.Out.get_grad(ax, ay, d); // gradient from above, from chain rule
+                        var chain_grad = this.out_act.get_grad(ax, ay, d); // gradient from above, from chain rule
                         for (var fy = 0; fy < f.sy; fy++)
                         {
                             var oy = y + fy; // coordinates in the original input array coordinates
@@ -116,11 +116,11 @@ namespace ConvNetLib
                                 var ox = x + fx;
                                 if (oy >= 0 && oy < V_sy && ox >= 0 && ox < V_sx)
                                 {
-                                    for (var fd = 0; fd < f.Depth; fd++)
+                                    for (var fd = 0; fd < f.depth; fd++)
                                     {
                                         // avoid function call overhead (x2) for efficiency, compromise modularity :(
-                                        var ix1 = ((V_sx * oy) + ox) * V.Depth + fd;
-                                        var ix2 = ((f.sx * fy) + fx) * f.Depth + fd;
+                                        var ix1 = ((V_sx * oy) + ox) * V.depth + fd;
+                                        var ix2 = ((f.sx * fy) + fx) * f.depth + fd;
                                         f.dw[ix2] += V.w[ix1] * chain_grad;
                                         V.dw[ix1] += f.w[ix2] * chain_grad;
                                     }
@@ -137,6 +137,30 @@ namespace ConvNetLib
         public double l1_decay_mul = 0;
         public double l2_decay_mul = 0;
 
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx = json["out_sx"];
+            this.out_sy = json["out_sy"];
+
+            this.sx = json["sx"]; // filter size in x, y dims
+            this.sy = json["sy"];
+            this.stride = json["stride"];
+            this.in_depth = json["in_depth"]; // depth of input volume
+            this.filters = new List<ConvNetLib.Volume>();
+            this.l1_decay_mul = json["l1_decay_mul"] != null ? json["l1_decay_mul"] : 1.0;
+            this.l2_decay_mul = json["l2_decay_mul"] != null ? json["l2_decay_mul"] : 1.0;
+            this.pad = json["pad"] != null ? json["pad"] : 0;
+            for (var i = 0; i < json["filters"].Length; i++)
+            {
+                var v = new Volume(0, 0, 0, 0);
+
+                v.fromJSON(json["filters"].GetValue(i));
+                this.filters.Add(v);
+            }
+            this.biases = new Volume(0, 0, 0, 0);
+            this.biases.fromJSON(json["biases"]);
+        }
         public ConvLayer(LayerDef _opt = null) : base(_opt)
         {
             var opt = _opt == null ? new LayerDef() : _opt;

@@ -21,8 +21,8 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume V, bool isTraining)
         {
-            this.In = V;
-            this.Out = V;
+            this.in_act = V;
+            this.out_act = V;
             return V; // identity function
         }
 
@@ -30,7 +30,7 @@ namespace ConvNetLib
         public override double Backward(object yy)
         {
             // compute and accumulate gradient wrt weights and bias of this layer
-            var x = this.In;
+            var x = this.in_act;
             x.dw = new double[x.w.Length]; // zero out the gradient of input Vol
             var loss = 0.0;
             if (yy is double[])

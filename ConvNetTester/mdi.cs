@@ -32,7 +32,7 @@ namespace ConvNetTester
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            imgRegressor f = new imgRegressor();
+            painting f = new painting();
             f.MdiParent = this;
             f.Show();
         }

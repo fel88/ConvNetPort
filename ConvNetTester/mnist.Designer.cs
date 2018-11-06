@@ -40,7 +40,6 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -84,7 +83,7 @@
             // 
             this.button2.Location = new System.Drawing.Point(17, 38);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(75, 24);
             this.button2.TabIndex = 3;
             this.button2.Text = "next";
             this.button2.UseVisualStyleBackColor = true;
@@ -137,6 +136,7 @@
             this.columnHeader2});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
+            this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listView1.Location = new System.Drawing.Point(488, 67);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(332, 222);
@@ -151,16 +151,6 @@
             // columnHeader2
             // 
             this.columnHeader2.Width = 100;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(385, 68);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(90, 24);
-            this.checkBox2.TabIndex = 12;
-            this.checkBox2.Text = "show ms";
-            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // textBox7
             // 
@@ -197,7 +187,6 @@
             this.tabPage1.Controls.Add(this.textBox8);
             this.tabPage1.Controls.Add(this.pictureBox1);
             this.tabPage1.Controls.Add(this.textBox7);
-            this.tabPage1.Controls.Add(this.checkBox2);
             this.tabPage1.Controls.Add(this.pictureBox2);
             this.tabPage1.Controls.Add(this.listView1);
             this.tabPage1.Controls.Add(this.textBox6);
@@ -220,9 +209,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(385, 123);
+            this.button3.Location = new System.Drawing.Point(382, 127);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 23);
+            this.button3.Size = new System.Drawing.Size(90, 29);
             this.button3.TabIndex = 16;
             this.button3.Text = "pause";
             this.button3.UseVisualStyleBackColor = true;
@@ -284,7 +273,6 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox8;
         private System.Windows.Forms.TabControl tabControl1;

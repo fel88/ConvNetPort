@@ -5,9 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace ConvNetTester
 {
-    public class ReadOnlyBitmap
+    public class NativeBitmap
     {
-
         public static Bitmap BytesToBmp(byte[] bmpBytes, Size imageSize, PixelFormat format)
         {
             Bitmap bmp = new Bitmap(imageSize.Width, imageSize.Height);
@@ -47,7 +46,7 @@ namespace ConvNetTester
         public int Height;
         public PixelFormat Format;
         public Size Size;
-        public ReadOnlyBitmap(Bitmap bmp)
+        public NativeBitmap(Bitmap bmp)
         {
             Size = bmp.Size;
             Format = bmp.PixelFormat;

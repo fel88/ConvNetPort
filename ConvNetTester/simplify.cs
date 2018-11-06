@@ -132,8 +132,8 @@ namespace ConvNetTester
                     if (cx % gridstep == 0 && cy % gridstep == 0)
                     {
                         // record the transformation information
-                        var xt = net.layers[lix].Out.w[d0]; // in screen coords
-                        var yt = net.layers[lix].Out.w[d1]; // in screen coords
+                        var xt = net.layers[lix].out_act.w[d0]; // in screen coords
+                        var yt = net.layers[lix].out_act.w[d1]; // in screen coords
                         gridx.Add(xt);
                         gridy.Add(yt);
                         gridl.Add((a.w[0] > a.w[1]) ? 0 : 1); // remember final label as well
@@ -370,8 +370,8 @@ namespace ConvNetTester
                     netx.w[1] = stuff.data[i][1];
                     var a = net.Forward(netx, false);
 
-                    var xt = visWIDTH * (net.layers[lix].Out.w[d0] - mmx.minv) / mmx.dv; // in screen coords
-                    var yt = visHEIGHT * (net.layers[lix].Out.w[d1] - mmy.minv) / mmy.dv; // in screen coords
+                    var xt = visWIDTH * (net.layers[lix].out_act.w[d0] - mmx.minv) / mmx.dv; // in screen coords
+                    var yt = visHEIGHT * (net.layers[lix].out_act.w[d1] - mmy.minv) / mmy.dv; // in screen coords
                     Brush br = Brushes.Green;
                     if (stuff.labels[i] == 1)
                     {

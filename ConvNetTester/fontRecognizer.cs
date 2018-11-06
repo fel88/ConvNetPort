@@ -68,7 +68,7 @@ namespace ConvNetTester
 
             trainer.net = net;
 
-            
+
             int fcnt = 16;
 
             //net.layers.Add(new InputLayer() { out_sx = 24, out_sy = 24, out_depth = 1 });
@@ -98,7 +98,7 @@ namespace ConvNetTester
 
             defs.Add(new LayerDef() { type = typeof(SoftmaxLayer), in_sx = 1, in_sy = 1, num_classes = symbols.Count });
 
-            net.makeLayers(defs);            
+            net.makeLayers(defs);
 
             LoadItems();
             LoadTests();
@@ -114,7 +114,7 @@ namespace ConvNetTester
         {
             //1.get rectangle of data
             //2. fit in new image 28x28
-            ReadOnlyBitmap rom = new ReadOnlyBitmap(bmp);
+            NativeBitmap rom = new NativeBitmap(bmp);
             int minx = int.MaxValue;
             int miny = int.MaxValue;
             int maxy = int.MinValue;
@@ -175,7 +175,7 @@ namespace ConvNetTester
                     var ms = gr.MeasureString(symbol, font);
                     gr.DrawString(symbol, font, Brushes.Black, bmp2.Width / 2 - ms.Width / 2, bmp2.Height / 2 - ms.Height / 2);
                     var bmp = Fit(bmp2, new Size(28, 28));
-                    ReadOnlyBitmap rom = new ReadOnlyBitmap(bmp);
+                    NativeBitmap rom = new NativeBitmap(bmp);
                     var mi = new MnistItem() { };
                     mi.Data = new byte[rom.Width, rom.Height];
                     for (int j = 0; j < rom.Width; j++)
@@ -302,7 +302,7 @@ namespace ConvNetTester
                     var ms = gr.MeasureString(symbol, font);
                     gr.DrawString(symbol, font, Brushes.Black, bmp2.Width / 2 - ms.Width / 2, bmp2.Height / 2 - ms.Height / 2);
                     var bmp = Fit(bmp2, new Size(28, 28));
-                    ReadOnlyBitmap rom = new ReadOnlyBitmap(bmp);
+                    NativeBitmap rom = new NativeBitmap(bmp);
                     var mi = new MnistItem() { };
                     mi.Data = new byte[rom.Width, rom.Height];
                     for (int j = 0; j < rom.Width; j++)
@@ -422,6 +422,8 @@ namespace ConvNetTester
         }
 
         private MnistSampleItem lastr = null;
+
+        public char[][] synonyms = new char[][] { new char[] { 'c', 'с' }, new char[] { 'e', 'е' } };
         public bool Next()
         {
             //cnt++;
@@ -440,6 +442,11 @@ namespace ConvNetTester
             textBox3.Text = tags[pp.k] + ": " + (pp.p * 100.0).ToString("F1") + "%";
             pp = pps[2];
             textBox4.Text = tags[pp.k] + ": " + (pp.p * 100.0).ToString("F1") + "%";*/
+            char cc = (char)p;
+            if (synonyms.Any(z => z.Contains(cc)))
+            {
+
+            }
             if (prep.label == p)
             {
                 textBox1.BackColor = Color.Green;
@@ -452,6 +459,8 @@ namespace ConvNetTester
             }
             return prep.label == p;
         }
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             Next();
@@ -509,7 +518,7 @@ namespace ConvNetTester
             gr.Clear(Color.White);
             gr.DrawImage(bmp, new Rectangle((28 - ww) / 2, (28 - hh) / 2, ww, hh), new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
             pictureBox3.Image = zip;
-            ReadOnlyBitmap rom = new ReadOnlyBitmap(zip);
+            NativeBitmap rom = new NativeBitmap(zip);
             var mi = new MnistItem() { };
             mi.Data = new byte[rom.Width, rom.Height];
             for (int j = 0; j < rom.Width; j++)
@@ -582,7 +591,7 @@ namespace ConvNetTester
                         int h = aa[1];
 
                         Bitmap bmp = new Bitmap(w, h);
-                        ReadOnlyBitmap rom = new ReadOnlyBitmap(bmp);
+                        NativeBitmap rom = new NativeBitmap(bmp);
                         int cntr = 2;
                         for (int i = 0; i < w; i++)
                         {
@@ -656,7 +665,11 @@ namespace ConvNetTester
             pictureBox3.Image = prep.Item.GetBitmap().GetBitmap();
             textBox6.Text = "label: " + tags[prep.label];
             var p = TestVolume(prep.x[0] as Volume);
+            char cc = (char)p;
+            if (synonyms.Any(z => z.Contains(cc)))
+            {
 
+            }
             if (prep.label == p)
             {
                 textBox1.BackColor = Color.Green;
@@ -667,6 +680,7 @@ namespace ConvNetTester
                 textBox1.BackColor = Color.Red;
                 textBox1.ForeColor = Color.White;
             }
+            
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using static ConvNetTester.cnnutil;
 
@@ -21,8 +22,11 @@ namespace ConvNetTester
             InitializeComponent();
             listView1.DoubleBuffered(true);
             Init();
+
+
         }
         Net net;
+
         Trainer trainer;
         void Init()
         {
@@ -113,7 +117,11 @@ namespace ConvNetTester
                 CifarStuff.tests.AddRange(tests);
                 SetStatusInfo("Loaded: " + (CifarStuff.items.Count + CifarStuff.tests.Count) + " images; " + sw.ElapsedMilliseconds + " ms");
 
-                Invoke(this, () => { toolStripProgressBar1.Visible = false; Enabled = true; });
+                Invoke(this, () =>
+                {
+                    toolStripProgressBar1.Visible = false; Enabled = true;
+                    button4.Enabled = true;
+                });
             });
             th.IsBackground = true;
             th.Start();
@@ -136,22 +144,45 @@ namespace ConvNetTester
         {
             if (CifarStuff.items.Any())
             {
-                pictureBox1.Image = CifarStuff.random_one().Bmp;
+
                 var t = CifarStuff.sample_test_instance();
+                pictureBox1.Image = t.Bmp;
                 net.Forward(t.x);
-                
-                
-                var p = net.getPrediction();
-                textBox8.Text = "predict: " + p;
+                label1.Text = CifarStuff.labels[t.label];
+
+                var pps = net.GetPredictions();
+                var p = pps.First().k;
+                textBox5.Invoke(((Action)(() =>
+                {
+                    textBox5.Text = (CifarStuff.labels[p]) + ": " + (pps.First().p * 100.0).ToString("F1") + "%";
+
+                })));
+
+                var pp = pps[1];
+                textBox3.Invoke(((Action)(() =>
+                {
+                    textBox3.Text = CifarStuff.labels[pp.k] + ": " + (pp.p * 100.0).ToString("F1") + "%";
+
+                })));
+                pp = pps[2];
+                textBox4.Invoke(((Action)(() =>
+                {
+                    textBox4.Text = CifarStuff.labels[pp.k] + ": " + (pp.p * 100.0).ToString("F1") + "%";
+
+                })));
+
+
+
+
                 if (t.label == p)
                 {
-                    textBox8.BackColor = Color.Green;
-                    textBox8.ForeColor = Color.White;
+                    textBox5.BackColor = Color.Green;
+                    textBox5.ForeColor = Color.White;
                 }
                 else
                 {
-                    textBox8.BackColor = Color.Red;
-                    textBox8.ForeColor = Color.White;
+                    textBox5.BackColor = Color.Red;
+                    textBox5.ForeColor = Color.White;
                 }
             }
         }
@@ -170,12 +201,13 @@ namespace ConvNetTester
             // visualize training status
             listView1.Items.Add(new ListViewItem(new string[] { "Forward time per example: ", stats.fwd_time + "ms" }) { });
             listView1.Items.Add(new ListViewItem(new string[] { "Backprop time per example: ", stats.bwd_time + "ms" }) { });
-            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss: ", cnnutil.f2t(xLossWindow.get_average()) + "ms" }) { });
-            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss: ", cnnutil.f2t(wLossWindow.get_average()) + "ms" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "Classification loss: ", cnnutil.f2t(xLossWindow.get_average()) + "" }) { });
+            listView1.Items.Add(new ListViewItem(new string[] { "L2 Weight decay loss: ", cnnutil.f2t(wLossWindow.get_average()) + "" }) { });
             listView1.Items.Add(new ListViewItem(new string[] { "Training accuracy: ", (100.0 * cnnutil.f2t(trainAccWindow.get_average())).ToString("F1") + "%" }) { });
             listView1.Items.Add(new ListViewItem(new string[] { "Validation accuracy: ", (100.0 * cnnutil.f2t(valAccWindow.get_average())).ToString("F1") + "%" }) { });
             listView1.Items.Add(new ListViewItem(new string[] { "Examples seen: ", step_num + "" }) { });
         }
+
         void step(CifarVolumePrepared sample)
         {
             var x = sample.x;
@@ -207,9 +239,9 @@ namespace ConvNetTester
 
             UpdateStats(stats);
 
-
             step_num++;
         }
+
         // loads a training image and trains on it with the network
         bool paused = true;
         void load_and_step()
@@ -217,8 +249,13 @@ namespace ConvNetTester
             if (paused) return;
 
             var sample = CifarStuff.sample_training_instance();
-            pictureBox2.Image = sample.Item.Bmp;
+            pictureBox2.Image = sample.Bmp;
             step(sample); // process this image
+
+
+            //  testAccWindow.add(num_correct / (double)num_total);
+            // textBox2.Text = "test accuracy (200 last): " + (testAccWindow.get_average() * 100.0).ToString("F1") + "%";
+            //bestTestAccuracy = Math.Max(testAccWindow.get_average(), bestTestAccuracy);
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -228,6 +265,94 @@ namespace ConvNetTester
         private void button4_Click(object sender, EventArgs e)
         {
             paused = false;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            paused = !paused;
+        }
+
+        void reset_all()
+        {
+
+            // reinit trainer
+            trainer = new SGDTrainer(net, new TdTrainerOptions() { learning_rate = trainer.learning_rate, momentum = trainer.momentum, batch_size = trainer.batch_size, l2_decay = trainer.l2_decay });
+            //update_net_param_display();
+
+            // reinit windows that keep track of val/train accuracies
+            xLossWindow.reset();
+            wLossWindow.reset();
+            trainAccWindow.reset();
+            valAccWindow.reset();
+            testAccWindow.reset();
+            lossGraph = new cnnvis.Graph(); // reinit graph too
+            step_num = 0;
+
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+            trainer.learning_rate = 0.0001;
+            trainer.momentum = 0.9;
+            trainer.batch_size = 2;
+            trainer.l2_decay = 0.00001;
+            reset_all();
+            var txt = File.ReadAllText("cifar10_snapshot.json");
+
+            var ser = new JavaScriptSerializer();
+            dynamic rets = ser.DeserializeObject(txt);
+            int cnt = 0;
+            net = new Net();
+            foreach (var item in rets["layers"])
+            {
+                Layer l = null;
+                switch ((string)item["layer_type"])
+                {
+                    case "input":
+                        {
+                            l = new InputLayer();
+
+                        }
+                        break;
+                    case "pool":
+                        {
+                            l = new PoolLayer();
+
+                        }
+                        break;
+                    case "conv":
+                        {
+                            l = new ConvLayer();
+
+                        }
+                        break;
+                    case "fc":
+                        {
+                            l = new FullConnLayer();
+
+                        }
+                        break;
+                    case "softmax":
+                        {
+                            l = new SoftmaxLayer();
+
+                        }
+                        break;
+                    case "relu":
+                        {
+                            l = new ReluLayer();
+
+                        }
+                        break;
+                }
+                l.fromJson(item);
+                            net.layers.Add(l);
+                //net.layers[cnt].fromJson(item);
+                //cnt++;
+            }
+
+
+            //var jobj = JsonObject.Parse(new JsonParseContext() { Text = txt });
         }
     }
 }

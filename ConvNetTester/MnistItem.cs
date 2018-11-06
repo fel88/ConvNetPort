@@ -20,9 +20,9 @@ namespace ConvNetTester
         public int Id;
         public byte[,] Data;
         public int Label;
-        private ReadOnlyBitmap _bitmap = null;
+        private NativeBitmap _bitmap = null;
 
-        public ReadOnlyBitmap Bitmap
+        public NativeBitmap Bitmap
         {
             get
             {
@@ -37,11 +37,11 @@ namespace ConvNetTester
                 _bitmap = value;
             }
         }
-        public ReadOnlyBitmap GetBitmap()
+        public NativeBitmap GetBitmap()
         {
             if (_bitmap != null) return _bitmap;
             Bitmap bmp = new Bitmap(Data.GetLength(0), Data.GetLength(1));
-            ReadOnlyBitmap rom = new ReadOnlyBitmap(bmp);
+            NativeBitmap rom = new NativeBitmap(bmp);
             for (int i = 0; i < Data.GetLength(0); i++)
             {
                 for (int j = 0; j < Data.GetLength(1); j++)
@@ -75,119 +75,8 @@ namespace ConvNetTester
         public bool isval;
     }
 
-    public class CifarVolumePrepared
-    {
-        public Volume x;
-        public int label;
-        public bool isVal;
-        public object[] raw;
-        public bool isval;
-        public CifarImg Item;
-    }
-    public class CifarStuff
-    {
-        public static bool use_validation_data = true;
-        public static CifarVolumePrepared sample_test_instance()
-        {
+  
 
-            
-            var k = (int)Math.Floor(Rand.NextDouble() * tests.Count); // sample within the batch
-            
-            // fetch the appropriate row of the training image and reshape into a Vol
-            var item = tests[k];
-            var p = item.Bmp;
-            var x = new Volume(32, 32, 3, 0.0);
-            var W = 32 * 32;
-            var j = 0;
-            for (var dc = 0; dc < 3; dc++)
-            {
-                var i = 0;
-                for (var xc = 0; xc < 32; xc++)
-                {
-
-                    for (var yc = 0; yc < 32; yc++)
-                    {
-                        var px = p.GetPixel(xc, yc);
-                        var bt = (byte)((px.ToArgb() & (dc << 8)) >> 8);
-                        var ix = ((W * k) + i) * 4 + dc;
-                        x.Set(yc, xc, dc, bt / 255.0 - 0.5);
-                        i++;
-                    }
-                }
-            }
-
-            var dx = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
-            var dy = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
-
-            x = Volume.Augment(x, 32, dx, dy, Rand.NextDouble() < 0.5); //maybe flip horizontally
-            
-            return new CifarVolumePrepared() { x = x, label = item.label,  Item = item };
-        }
-        public static CifarVolumePrepared sample_training_instance()
-        {
-
-            // find an unloaded batch
-            //var bi = Math.Floor(Rand.NextDouble() * loaded_train_batches.length);
-            // var b = loaded_train_batches[bi];
-            var k = (int)Math.Floor(Rand.NextDouble() * items.Count); // sample within the batch
-            /*var n = b * 1000 + k;
-
-            // load more batches over time
-            if (step_num % 2000 == 0 && step_num > 0)
-            {
-                for (var i = 0; i < num_batches; i++)
-                {
-                    if (!loaded[i])
-                    {
-                        // load it
-                        load_data_batch(i);
-                        break; // okay for now
-                    }
-                }
-            }*/
-
-            // fetch the appropriate row of the training image and reshape into a Vol
-            var item = items[k];
-            var p = item.Bmp;
-            var x = new Volume(32, 32, 3, 0.0);
-            var W = 32 * 32;
-            var j = 0;
-            for (var dc = 0; dc < 3; dc++)
-            {
-                var i = 0;
-                for (var xc = 0; xc < 32; xc++)
-                {
-
-                    for (var yc = 0; yc < 32; yc++)
-                    {
-                        var px = p.GetPixel(xc, yc);
-                        var bt = (byte)((px.ToArgb() & (dc << 8)) >> 8);
-                        var ix = ((W * k) + i) * 4 + dc;
-                        x.Set(yc, xc, dc, bt / 255.0 - 0.5);
-                        i++;
-                    }
-                }
-            }
-
-            var dx = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
-            var dy = (int)Math.Floor(Rand.NextDouble() * 5 - 2);
-
-            x = Volume.Augment(x, 32, dx, dy, Rand.NextDouble() < 0.5); //maybe flip horizontally
-
-            var isval = use_validation_data && k % 10 == 0 ? true : false;
-            return new CifarVolumePrepared() { x = x, label = item.label, isval = isval, Item = item };
-        }
-        public static List<CifarImg> items = new List<CifarImg>();
-
-        public static List<CifarImg> tests = new List<CifarImg>();
-        public static Random Rand = new Random();
-        public static string[] labels;
-
-        public static CifarImg random_one()
-        {
-            return items[Rand.Next(items.Count)];
-        }
-    }
     public class MnistStuff
     {
         public static Random Rand = new Random();
@@ -353,12 +242,5 @@ namespace ConvNetTester
 
     }
 
-    public class CifarImg
-    {
-        public Bitmap Bmp;
-
-        public byte label;
-        public Volume x;
-        internal bool isval;
-    }
+    
 }

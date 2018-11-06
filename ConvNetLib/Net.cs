@@ -48,7 +48,7 @@ namespace ConvNetLib
         {
             var S = this.layers[this.layers.Count - 1];
 
-            var p = S.Out.w;
+            var p = S.out_act.w;
             List<PredClass> ppc = new List<PredClass>();
             for (var i = 0; i < p.Length; i++)
             {
@@ -64,7 +64,7 @@ namespace ConvNetLib
             // prediction, assuming the last layer of the net is a softmax
             var S = this.layers[this.layers.Count - 1];
 
-            var p = S.Out.w;
+            var p = S.out_act.w;
             var maxv = p[0];
             var maxi = 0;
             for (var i = 1; i < p.Length; i++)

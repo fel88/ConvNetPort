@@ -10,9 +10,9 @@ using System.Collections.Generic;
 
 namespace ConvNetTester
 {
-    public partial class imgRegressor : Form
+    public partial class painting : Form
     {
-        public imgRegressor()
+        public painting()
         {
             InitializeComponent();
             numericUpDown1.Value = mod_skip_draw;
@@ -80,8 +80,8 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
 
         private Trainer trainer;
 
-        private ReadOnlyBitmap bmp;
-        private ReadOnlyBitmap outbmp;
+        private NativeBitmap bmp;
+        private NativeBitmap outbmp;
         private int batches_per_iteration = 100;
         private double smooth_loss;
         public void update()
@@ -135,7 +135,7 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
         }
 
         private int counter = 0;
-        public int mod_skip_draw = 150;
+        public int mod_skip_draw = 500;
         public void draw()
         {
 
@@ -251,9 +251,9 @@ trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.9, batch
 
                 var t = listView1.SelectedItems[0].Tag as FileInfo;
                 var ld = (Bitmap)Bitmap.FromFile(t.FullName);
-                bmp = new ReadOnlyBitmap(ld);
+                bmp = new NativeBitmap(ld);
                 Bitmap bmpo = new Bitmap(bmp.Width, bmp.Height);
-                outbmp = new ReadOnlyBitmap(bmpo);
+                outbmp = new NativeBitmap(bmpo);
                 pictureBox1.Image = ld;
                 pause = temp;
             }

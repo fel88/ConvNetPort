@@ -17,6 +17,13 @@ namespace ConvNetLib
 
         }
 
+        public override void fromJson(dynamic json)
+        {
+            this.out_depth = json["out_depth"];
+            this.out_sx = json["out_sx"];
+            this.out_sy = json["out_sy"];            
+        }
+
         /*     public override void Init()
              {
                  // computed
@@ -29,7 +36,7 @@ namespace ConvNetLib
 
         public override Volume Forward(Volume V, bool isTraining)
         {
-            this.In = V;
+            this.in_act = V;
 
             var V2 = V.Clone();
             var N = V.w.Length;
@@ -42,14 +49,14 @@ namespace ConvNetLib
             {
 
             }
-            this.Out = V2;
-            return this.Out;
+            this.out_act = V2;
+            return this.out_act;
         }
 
         public override double Backward(object y)
         {
-            var V = this.In; // we need to set dw of this
-            var V2 = this.Out;
+            var V = this.in_act; // we need to set dw of this
+            var V2 = this.out_act;
             var N = V.w.Length;
             V.dw = new double[N]; // zero out gradient wrt data
             for (var i = 0; i < N; i++)
