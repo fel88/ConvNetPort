@@ -5,10 +5,8 @@ using System.Xml.Linq;
 
 namespace ConvNetLib
 {
-
     public class FullConnLayer : Layer
     {
-
         public FullConnLayer(LayerDef def = null) : base(def)
         {
             var opt = def != null ? def : new LayerDef();

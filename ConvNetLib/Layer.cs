@@ -44,7 +44,7 @@ namespace ConvNetLib
 
         public virtual string ToXml()
         {
-            return "";
+            return "<layer/>";
         }
 
         public virtual void ParseXml(XElement elem)

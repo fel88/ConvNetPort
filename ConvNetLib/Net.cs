@@ -110,11 +110,13 @@ namespace ConvNetLib
         public void RestoreXml(string txt)
         {
             var doc = XDocument.Parse(txt);
+            int cnt = 0;
             foreach (var descendant in doc.Descendants("layer"))
             {
-                var nm = descendant.Attribute("name").Value;
-                var ll = layers.FirstOrDefault(z => z.Name == nm);
-                if (ll != null)
+                var ll = layers[cnt++];
+                //var nm = descendant.Attribute("name").Value;
+                //var ll = layers.FirstOrDefault(z => z.Name == nm);
+                //if (ll != null)
                 {
                     ll.ParseXml(descendant);
                 }

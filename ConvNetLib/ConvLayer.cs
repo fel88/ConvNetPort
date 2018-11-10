@@ -8,7 +8,6 @@ namespace ConvNetLib
     public class ConvLayer : Layer
     {
 
-
         /*public override void Init()
         {
             out_depth = filtersCnt;
@@ -22,12 +21,9 @@ namespace ConvNetLib
         }
         */
 
-
-
         public int? stride;
-
-
         public int pad;
+
         public List<Volume> filters = new List<Volume>();
         public int filtersCnt = 8;
         public Volume biases = new Volume();

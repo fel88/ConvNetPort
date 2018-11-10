@@ -204,19 +204,24 @@ namespace ConvNetTester
             }
 
             //w.agents[0].brain.visSelf(document.getElementById('brain_info_div'));
-
-
-            listView1.BeginUpdate();
-            listView1.Items.Clear();
-            listView1.Items.Add("experience replay size: " + w.agents[0].brain.experience.Count);
-            listView1.Items.Add("exploration epsilon: " + w.agents[0].brain.epsilon);
-            listView1.Items.Add("age: " + w.agents[0].brain.age);
-            listView1.Items.Add("average Q-learning loss: " + w.agents[0].brain.average_loss_window.get_average());
-            listView1.Items.Add("smooth - ish reward: " + w.agents[0].brain.average_reward_window.get_average());
-            listView1.EndUpdate();
+            UpdateStatus();
 
             pictureBox1.Image = bmp;
         }
+
+        public void UpdateStatus()
+        {
+            listView1.BeginUpdate();
+            listView1.Items.Clear();
+            listView1.Items.Add(new ListViewItem(new string[] { "experience replay size: ", w.agents[0].brain.experience.Count + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "exploration epsilon: ", w.agents[0].brain.epsilon + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "age: ", w.agents[0].brain.age + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "average Q-learning loss: ", w.agents[0].brain.average_loss_window.get_average() + "" }));
+            listView1.Items.Add(new ListViewItem(new string[] { "smooth - ish reward: ", w.agents[0].brain.average_reward_window.get_average() + "" }));
+            listView1.EndUpdate();
+
+        }
+
 
         int current_interval_id;
         bool skipdraw = false;
@@ -769,22 +774,22 @@ namespace ConvNetTester
             // (given that an appropriate number of state measurements already exist, of course)
             if (this.forward_passes > this.temporal_window + 1)
             {
-                var e = new Experience();
-                var n = this.window_size;
-                e.state0 = this.net_window[n - 2];
-                e.action0 = this.action_window[n - 2];
-                e.reward0 = this.reward_window[n - 2];
-                e.state1 = this.net_window[n - 1];
-                if (this.experience.Count < this.experience_size)
-                {
-                    this.experience.Add(e);
-                }
-                else
-                {
-                    // replace. finite memory!
-                    var ri = NetStuff.randi(0, this.experience_size.Value);
-                    this.experience[ri] = e;
-                }
+                //var e = new Experience();
+                //var n = this.window_size;
+                //e.state0 = this.net_window[n - 2];
+                //e.action0 = this.action_window[n - 2];
+                //e.reward0 = this.reward_window[n - 2];
+                //e.state1 = this.net_window[n - 1];
+                //if (this.experience.Count < this.experience_size)
+                //{
+                //    this.experience.Add(e);
+                //}
+                //else
+                //{
+                //    // replace. finite memory!
+                //    var ri = NetStuff.randi(0, this.experience_size.Value);
+                //    this.experience[ri] = e;
+                //}
             }
             double avcost = 0.0;
             // learn based on experience, once we have some samples to go on
@@ -1198,7 +1203,7 @@ namespace ConvNetTester
 
     public class SGDTrainer : Trainer
     {
-        private TdTrainerOptions tdtrainer_options;        
+        private TdTrainerOptions tdtrainer_options;
 
         public SGDTrainer(Net value_net, TdTrainerOptions tdtrainer_options)
         {
@@ -1226,7 +1231,7 @@ namespace ConvNetTester
             double sum;
 
             public Window() { }
-            public Window(int? size, int? minsize=null)
+            public Window(int? size, int? minsize = null)
             {
                 this.v = new List<double>();
                 this.size = size == null ? 100 : size;

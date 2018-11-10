@@ -3,8 +3,7 @@
 namespace ConvNetLib
 {
     public class InputLayer : Layer
-    {
-        
+    {        
         public InputLayer(LayerDef def = null) : base(def)
         {
             var opt = def != null ? def : new LayerDef();
@@ -36,8 +35,9 @@ namespace ConvNetLib
 
         public override string ToXml()
         {
-            return $"<input out_depth=\"{out_depth}\" out_sx=\"{out_sx}\" out_sy=\"{out_sy}\">";
+            return $"<layer out_depth=\"{out_depth}\" out_sx=\"{out_sx}\" out_sy=\"{out_sy}\"/>";
         }
+
         public override void ParseXml(XElement elem)
         {
             out_depth = int.Parse(elem.Attribute("out_depth").Value);
