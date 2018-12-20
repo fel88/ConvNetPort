@@ -6,9 +6,6 @@ namespace ConvNetLib
 {
     public class SoftmaxLayer : Layer
     {
-
-
-
         private double[] es;
 
         public SoftmaxLayer(LayerDef def = null) : base(def)
@@ -120,6 +117,10 @@ namespace ConvNetLib
         public override void ParseXml(XElement elem)
         {
             var ess = elem.Attribute("es").Value.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            if (es == null)
+            {
+                es = new double[ess.Count()];
+            }
             for (int i = 0; i < ess.Count(); i++)
             {
                 es[i] = double.Parse(ess[i]);

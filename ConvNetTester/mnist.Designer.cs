@@ -59,10 +59,9 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(17, 70);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pictureBox1.Location = new System.Drawing.Point(11, 48);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(174, 170);
+            this.pictureBox1.Size = new System.Drawing.Size(117, 111);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -70,10 +69,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(17, 5);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.button1.Location = new System.Drawing.Point(11, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 25);
+            this.button1.Size = new System.Drawing.Size(75, 21);
             this.button1.TabIndex = 1;
             this.button1.Text = "load";
             this.button1.UseVisualStyleBackColor = true;
@@ -81,9 +79,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(17, 38);
+            this.button2.Location = new System.Drawing.Point(11, 25);
+            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 24);
+            this.button2.Size = new System.Drawing.Size(50, 23);
             this.button2.TabIndex = 3;
             this.button2.Text = "next";
             this.button2.UseVisualStyleBackColor = true;
@@ -93,9 +92,10 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 341);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 235);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(920, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 9, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(626, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -113,20 +113,20 @@
             // pictureBox2
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(204, 67);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pictureBox2.Location = new System.Drawing.Point(136, 47);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(174, 170);
+            this.pictureBox2.Size = new System.Drawing.Size(117, 111);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 9;
             this.pictureBox2.TabStop = false;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(382, 198);
+            this.textBox6.Location = new System.Drawing.Point(255, 129);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(100, 26);
+            this.textBox6.Size = new System.Drawing.Size(68, 20);
             this.textBox6.TabIndex = 10;
             // 
             // listView1
@@ -137,9 +137,10 @@
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.listView1.Location = new System.Drawing.Point(488, 67);
+            this.listView1.Location = new System.Drawing.Point(325, 44);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(332, 222);
+            this.listView1.Size = new System.Drawing.Size(286, 161);
             this.listView1.TabIndex = 11;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -154,18 +155,20 @@
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(147, 248);
+            this.textBox7.Location = new System.Drawing.Point(98, 161);
+            this.textBox7.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox7.Name = "textBox7";
             this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(298, 26);
+            this.textBox7.Size = new System.Drawing.Size(200, 20);
             this.textBox7.TabIndex = 13;
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(16, 248);
+            this.textBox8.Location = new System.Drawing.Point(11, 161);
+            this.textBox8.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox8.Name = "textBox8";
             this.textBox8.ReadOnly = true;
-            this.textBox8.Size = new System.Drawing.Size(100, 26);
+            this.textBox8.Size = new System.Drawing.Size(68, 20);
             this.textBox8.TabIndex = 15;
             // 
             // tabControl1
@@ -174,9 +177,10 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(920, 341);
+            this.tabControl1.Size = new System.Drawing.Size(626, 235);
             this.tabControl1.TabIndex = 16;
             // 
             // tabPage1
@@ -191,27 +195,30 @@
             this.tabPage1.Controls.Add(this.listView1);
             this.tabPage1.Controls.Add(this.textBox6);
             this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 29);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(912, 308);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Size = new System.Drawing.Size(618, 209);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Main";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(136, 6);
+            this.textBox1.Location = new System.Drawing.Point(91, 4);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(270, 26);
+            this.textBox1.Size = new System.Drawing.Size(181, 20);
             this.textBox1.TabIndex = 17;
             this.textBox1.Text = "Data\\Mnist";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(382, 127);
+            this.button3.Location = new System.Drawing.Point(255, 83);
+            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 29);
+            this.button3.Size = new System.Drawing.Size(60, 19);
             this.button3.TabIndex = 16;
             this.button3.Text = "pause";
             this.button3.UseVisualStyleBackColor = true;
@@ -220,10 +227,11 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.flowLayoutPanel1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 29);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(912, 308);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Size = new System.Drawing.Size(605, 188);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Visualization";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -231,20 +239,19 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 2);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(906, 302);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(601, 184);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // mnist
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(920, 363);
+            this.ClientSize = new System.Drawing.Size(626, 257);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "mnist";
             this.Text = "mnist";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
