@@ -116,7 +116,7 @@
             this.panel1.Controls.Add(this.listView1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(2, 2);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(544, 202);
             this.panel1.TabIndex = 1;
@@ -134,7 +134,7 @@
             // numericUpDown1
             // 
             this.numericUpDown1.Location = new System.Drawing.Point(133, 60);
-            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(51, 20);
             this.numericUpDown1.TabIndex = 14;
@@ -143,7 +143,7 @@
             // button7
             // 
             this.button7.Location = new System.Drawing.Point(80, 123);
-            this.button7.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button7.Margin = new System.Windows.Forms.Padding(2);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(57, 20);
             this.button7.TabIndex = 13;
@@ -159,8 +159,9 @@
             this.listView3.ContextMenuStrip = this.contextMenuStrip1;
             this.listView3.FullRowSelect = true;
             this.listView3.GridLines = true;
+            this.listView3.HideSelection = false;
             this.listView3.Location = new System.Drawing.Point(236, 139);
-            this.listView3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView3.Margin = new System.Windows.Forms.Padding(2);
             this.listView3.Name = "listView3";
             this.listView3.Size = new System.Drawing.Size(284, 61);
             this.listView3.TabIndex = 12;
@@ -194,7 +195,7 @@
             // button6
             // 
             this.button6.Location = new System.Drawing.Point(80, 103);
-            this.button6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button6.Margin = new System.Windows.Forms.Padding(2);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(57, 20);
             this.button6.TabIndex = 11;
@@ -205,7 +206,7 @@
             // button5
             // 
             this.button5.Location = new System.Drawing.Point(129, 23);
-            this.button5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button5.Margin = new System.Windows.Forms.Padding(2);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(50, 21);
             this.button5.TabIndex = 10;
@@ -216,7 +217,7 @@
             // textBox6
             // 
             this.textBox6.Location = new System.Drawing.Point(7, 2);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(2);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
             this.textBox6.Size = new System.Drawing.Size(68, 20);
@@ -225,7 +226,7 @@
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(141, 103);
-            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(50, 20);
             this.button3.TabIndex = 8;
@@ -236,7 +237,7 @@
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(141, 81);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(50, 21);
             this.button2.TabIndex = 7;
@@ -247,7 +248,7 @@
             // textBox4
             // 
             this.textBox4.Location = new System.Drawing.Point(9, 124);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(2);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(68, 20);
@@ -256,7 +257,7 @@
             // textBox3
             // 
             this.textBox3.Location = new System.Drawing.Point(9, 103);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(68, 20);
@@ -265,7 +266,7 @@
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(9, 145);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(194, 20);
@@ -274,7 +275,7 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(9, 82);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(68, 20);
@@ -284,7 +285,7 @@
             // 
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Location = new System.Drawing.Point(69, 23);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(57, 55);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -295,7 +296,7 @@
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Location = new System.Drawing.Point(9, 23);
-            this.pictureBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(57, 55);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -305,7 +306,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(80, 81);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(57, 21);
             this.button1.TabIndex = 1;
@@ -320,8 +321,9 @@
             this.columnHeader2});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(236, 6);
-            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(284, 129);
             this.listView1.TabIndex = 0;
@@ -360,7 +362,7 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(2, 2);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(556, 232);
@@ -370,9 +372,9 @@
             // 
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage1.Size = new System.Drawing.Size(548, 206);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Main";
@@ -385,10 +387,10 @@
             this.tabPage2.Controls.Add(this.button4);
             this.tabPage2.Controls.Add(this.textBox5);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabPage2.Size = new System.Drawing.Size(548, 194);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Size = new System.Drawing.Size(548, 206);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Server";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -401,8 +403,9 @@
             this.columnHeader5});
             this.listView2.FullRowSelect = true;
             this.listView2.GridLines = true;
+            this.listView2.HideSelection = false;
             this.listView2.Location = new System.Drawing.Point(167, 28);
-            this.listView2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView2.Margin = new System.Windows.Forms.Padding(2);
             this.listView2.Name = "listView2";
             this.listView2.Size = new System.Drawing.Size(376, 162);
             this.listView2.TabIndex = 3;
@@ -423,7 +426,7 @@
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(16, 38);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(147, 152);
             this.pictureBox1.TabIndex = 2;
@@ -432,7 +435,7 @@
             // button4
             // 
             this.button4.Location = new System.Drawing.Point(9, 10);
-            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button4.Margin = new System.Windows.Forms.Padding(2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(50, 24);
             this.button4.TabIndex = 1;
@@ -443,7 +446,7 @@
             // textBox5
             // 
             this.textBox5.Location = new System.Drawing.Point(63, 10);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(2);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(68, 20);
             this.textBox5.TabIndex = 0;
@@ -462,52 +465,54 @@
             // 
             // toolStripDropDownButton1
             // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clipboardToolStripMenuItem,
             this.fileToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(81, 22);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(66, 22);
             this.toolStripDropDownButton1.Tag = "";
             this.toolStripDropDownButton1.Text = "save xml";
             // 
             // clipboardToolStripMenuItem
             // 
             this.clipboardToolStripMenuItem.Name = "clipboardToolStripMenuItem";
-            this.clipboardToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.clipboardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clipboardToolStripMenuItem.Text = "clipboard";
             this.clipboardToolStripMenuItem.Click += new System.EventHandler(this.clipboardToolStripMenuItem_Click);
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fileToolStripMenuItem.Text = "file";
             this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // toolStripDropDownButton2
             // 
+            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clipboardToolStripMenuItem1,
             this.fileToolStripMenuItem1});
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(94, 22);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(79, 22);
             this.toolStripDropDownButton2.Text = "restore xml";
             // 
             // clipboardToolStripMenuItem1
             // 
             this.clipboardToolStripMenuItem1.Name = "clipboardToolStripMenuItem1";
-            this.clipboardToolStripMenuItem1.Size = new System.Drawing.Size(124, 22);
+            this.clipboardToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.clipboardToolStripMenuItem1.Text = "clipboard";
             this.clipboardToolStripMenuItem1.Click += new System.EventHandler(this.clipboardToolStripMenuItem1_Click);
             // 
             // fileToolStripMenuItem1
             // 
             this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
-            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(124, 22);
+            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.fileToolStripMenuItem1.Text = "file";
             this.fileToolStripMenuItem1.Click += new System.EventHandler(this.fileToolStripMenuItem1_Click);
             // 
@@ -518,7 +523,7 @@
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));

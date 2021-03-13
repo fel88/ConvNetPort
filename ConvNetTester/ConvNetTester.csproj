@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent.cs" />
+    <Compile Include="Brain.cs" />
     <Compile Include="Cifar10.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -53,8 +55,13 @@
       <DependentUpon>Cifar10.cs</DependentUpon>
     </Compile>
     <Compile Include="CifarStuff.cs" />
+    <Compile Include="cnnutil.cs" />
+    <Compile Include="cnnvis.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="DataWinow.cs" />
+    <Compile Include="Experience.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Eye.cs" />
     <Compile Include="fontRecognizer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,12 +69,15 @@
       <DependentUpon>fontRecognizer.cs</DependentUpon>
     </Compile>
     <Compile Include="FontRecognizerStuff.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="Opt.cs" />
     <Compile Include="qlearn.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="qlearn.Designer.cs">
       <DependentUpon>qlearn.cs</DependentUpon>
     </Compile>
+    <Compile Include="SGDTrainer.cs" />
     <Compile Include="simplify.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +108,9 @@
     <Compile Include="NativeBitmap.cs" />
     <Compile Include="Stuff.cs" />
     <Compile Include="TcpRoutine.cs" />
+    <Compile Include="Vec.cs" />
+    <Compile Include="Wall.cs" />
+    <Compile Include="World.cs" />
     <EmbeddedResource Include="Cifar10.resx">
       <DependentUpon>Cifar10.cs</DependentUpon>
     </EmbeddedResource>

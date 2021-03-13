@@ -291,7 +291,11 @@ namespace ConvNetTester
         }
         private void button5_Click(object sender, EventArgs e)
         {
-
+            if (!File.Exists("cifar10_snapshot.json"))
+            {
+                MessageBox.Show("cifar10_snapshot.json not found", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             trainer.learning_rate = 0.0001;
             trainer.momentum = 0.9;
             trainer.batch_size = 2;
@@ -301,7 +305,7 @@ namespace ConvNetTester
 
             var ser = new JavaScriptSerializer();
             dynamic rets = ser.DeserializeObject(txt);
-            int cnt = 0;
+            
             net = new Net();
             foreach (var item in rets["layers"])
             {
@@ -311,42 +315,36 @@ namespace ConvNetTester
                     case "input":
                         {
                             l = new InputLayer();
-
                         }
                         break;
                     case "pool":
                         {
                             l = new PoolLayer();
-
                         }
                         break;
                     case "conv":
                         {
                             l = new ConvLayer();
-
                         }
                         break;
                     case "fc":
                         {
                             l = new FullConnLayer();
-
                         }
                         break;
                     case "softmax":
                         {
                             l = new SoftmaxLayer();
-
                         }
                         break;
                     case "relu":
                         {
                             l = new ReluLayer();
-
                         }
                         break;
                 }
                 l.fromJson(item);
-                            net.layers.Add(l);
+                net.layers.Add(l);
                 //net.layers[cnt].fromJson(item);
                 //cnt++;
             }
